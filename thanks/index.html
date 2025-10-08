@@ -1,274 +1,281 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <title>CrunchClub – Danke</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="Cache-Control" content="no-store" />
-  <style>
-    :root {
-      --ok: #16a34a;
-      --warn: #f59e0b;
-      --err: #dc2626;
-      --fg: #0f172a;
-      --muted: #64748b;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #e2e8f0;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    }
-    html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-    .wrap { max-width: 880px; margin: 40px auto; padding: 0 16px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
-    h1 { font-size: 1.75rem; margin: 0 0 10px; }
-    p.lead { font-size: 1.05rem; color: var(--muted); margin-top: 0; }
-    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 999px; font-weight: 600; font-size: .95rem; border: 1px solid var(--border); }
-    .badge.ok { background: #ecfdf5; color: var(--ok); border-color: #bbf7d0; }
-    .badge.err { background: #fef2f2; color: var(--err); border-color: #fecaca; }
-    .kv { display:grid; grid-template-columns: 160px 1fr; gap: 8px 16px; margin-top: 16px; }
-    .kv div { padding: 6px 0; }
-    .kv .k { color: var(--muted); }
-    .hr { height:1px; background: var(--border); margin: 20px 0; }
-
-    /* Debug panel */
-    details.debug { margin-top: 20px; }
-    details.debug > summary { cursor: pointer; font-weight: 600; }
-    .debug-grid { display:grid; grid-template-columns: 220px 1fr; gap: 6px 14px; margin-top: 12px; }
-    .mono { font-family: var(--mono); font-size: 0.9rem; }
-    pre.code { background:#0b1020; color:#e5e7eb; border-radius:10px; padding:12px; overflow:auto; }
-    .btns { display:flex; gap:8px; flex-wrap: wrap; margin: 12px 0; }
-    button { background:#111827; color:#fff; border:0; border-radius:8px; padding:8px 12px; cursor:pointer; }
-    button.secondary { background:#334155; }
-    .note { font-size:.9rem; color:var(--muted); }
-    .alert { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; padding:10px 12px; border-radius:8px; margin-top:12px; }
-    a { color:#0ea5e9; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CrunchClub – Registrierung</title>
+<meta http-equiv="Cache-Control" content="no-store" />
+<style>
+  :root{
+    --ok:#16a34a; --warn:#f59e0b; --err:#dc2626; --fg:#0f172a; --muted:#64748b;
+    --bg:#f8fafc; --card:#fff; --border:#e2e8f0;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:880px;margin:32px auto;padding:0 16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  h1{margin:6px 0 8px;font-size:1.6rem}
+  p.lead{margin:0;color:var(--muted)}
+  .status{display:inline-flex;align-items:center;gap:.5rem;font-weight:700;
+    padding:6px 12px;border-radius:999px;border:1px solid var(--border)}
+  .ok{background:#ecfdf5;color:var(--ok);border-color:#bbf7d0}
+  .warn{background:#fffbeb;color:#a16207;border-color:#fde68a}
+  .err{background:#fef2f2;color:var(--err);border-color:#fecaca}
+  .grid{display:grid;grid-template-columns:160px 1fr;gap:10px 18px;margin:18px 0}
+  .k{color:var(--muted)}
+  .hr{height:1px;background:var(--border);margin:18px 0}
+  .tips{background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:12px;padding:12px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .btn{appearance:none;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;color:#fff;background:#111827}
+  .btn.secondary{background:#334155}
+  details.debug{margin-top:16px}
+  details.debug>summary{cursor:pointer;font-weight:600}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.9rem}
+  pre{background:#0b1020;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto}
+  a{color:#0ea5e9;text-decoration:none} a:hover{text-decoration:underline}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card" id="statusCard">
-      <div id="statusBadge" class="badge">Lade …</div>
-      <h1 id="title">CrunchClub – Vielen Dank!</h1>
-      <p class="lead" id="lead">Dein Scan wurde verarbeitet.</p>
+<div class="wrap">
+  <div class="card">
+    <div id="badge" class="status warn">Lade …</div>
+    <h1 id="title">CrunchClub – Registrierung</h1>
+    <p id="lead" class="lead">Bitte einen Moment.</p>
 
-      <div class="kv" id="kv">
-        <div class="k">Status</div><div id="kv_status">–</div>
-        <div class="k">Ort</div><div id="kv_venue">–</div>
-        <div class="k">Zeit</div><div id="kv_time">–</div>
-        <div class="k">Client-ID</div><div id="kv_cid">–</div>
-      </div>
-
-      <div class="hr"></div>
-
-      <details class="debug" open>
-        <summary>Entwickler/Debug-Panel (später entfernen)</summary>
-        <div class="alert">Hinweis: Diese Informationen sind nur für Entwicklung/Debugging vorgesehen. Vor Live-Betrieb entfernen.</div>
-
-        <div class="btns">
-          <button id="copyJson">Debug-JSON kopieren</button>
-          <button id="resetCid" class="secondary">Client-ID zurücksetzen</button>
-          <button id="reload" class="secondary">Seite neu laden</button>
-        </div>
-
-        <h3>Query-Parameter</h3>
-        <pre class="code mono" id="qp"></pre>
-
-        <h3>Geräte-/Browserinfos</h3>
-        <div class="debug-grid mono" id="dbgGrid">
-          <!-- dynamisch gefüllt -->
-        </div>
-
-        <h3>Lokaler Zustand</h3>
-        <pre class="code mono" id="localState"></pre>
-      </details>
-
-      <p class="note">Datenschutzhinweis (Entwicklungsphase): Diese Seite speichert eine anonyme Client-ID im Browser-Speicher, um wiederkehrende Besuche technisch zu erkennen. Keine personenbezogenen Daten, kein Tracking über Webseiten hinweg.</p>
+    <div class="grid">
+      <div class="k">Status</div><div id="kv_status">–</div>
+      <div class="k">Standort</div><div id="kv_venue">–</div>
+      <div class="k">Zeit</div><div id="kv_time">–</div>
+      <div class="k">Client-ID</div><div id="kv_cid">–</div>
     </div>
+
+    <div class="hr"></div>
+
+    <div id="tips" class="tips"></div>
+
+    <div class="actions">
+      <button id="retry" class="btn">Erneut versuchen</button>
+      <button id="reset" class="btn secondary">Client-ID zurücksetzen</button>
+      <a id="home" class="btn secondary" style="text-decoration:none" href="/">Zur Startseite</a>
+    </div>
+
+    <details class="debug" id="debugBox">
+      <summary>Entwickler/Debug-Infos (später entfernen)</summary>
+      <p class="mono">Query-Parameter</p>
+      <pre id="qp" class="mono"></pre>
+      <p class="mono">Lokaler Zustand</p>
+      <pre id="state" class="mono"></pre>
+      <p class="mono">Browser</p>
+      <pre id="ua" class="mono"></pre>
+      <div class="actions">
+        <button id="copy" class="btn secondary">Debug-JSON kopieren</button>
+      </div>
+    </details>
+
+    <p class="lead" style="margin-top:14px">
+      Hinweis: Es werden nur anonyme technische Daten (Zeit, Token, anonyme Client-ID) verarbeitet.
+    </p>
   </div>
+</div>
 
-  <script>
-    (function(){
-      const qs = new URLSearchParams(location.search);
+<script>
+(function(){
+  // ------ Helpers
+  const qs = new URLSearchParams(location.search);
+  function cidGet(){ try{ let id = localStorage.getItem('cc_client_id'); if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); } return id; }catch(e){ return '(kein Storage)'; } }
+  function cidReset(){ try{ localStorage.removeItem('cc_client_id'); }catch(e){} }
+  function set(el, html){ document.getElementById(el).innerHTML = html; }
+  function badge(cls, text){ const b = document.getElementById('badge'); b.className = 'status ' + cls; b.textContent = text; }
+  function advice(html){ set('tips', html); }
 
-      // 1) Client-ID verwalten (anonym)
-      function getClientId(){
-        try {
-          let cid = localStorage.getItem('cc_client_id');
-          if(!cid){
-            cid = crypto.randomUUID();
-            localStorage.setItem('cc_client_id', cid);
-          }
-          return cid;
-        } catch(e){
-          return '(localStorage nicht verfügbar)';
-        }
-      }
-      function resetClientId(){
-        try {
-          localStorage.removeItem('cc_client_id');
-        } catch(e){}
-      }
+  // ------ Inputs aus Redirect
+  const registered = qs.get('registered');   // "1" | "0" | null
+  const reason     = qs.get('reason');       // "dupe" | "rate" | "invalid" | "expired" | "inactive" | "venue" | "param" | "server" | ...
+  const ven        = qs.get('ven') || 'unbekannt';
 
-      const clientId = getClientId();
+  // ------ Sichtbare Felder
+  const now = new Date();
+  set('kv_time', now.toLocaleString());
+  set('kv_venue', ven);
+  const cid = cidGet();
+  set('kv_cid', cid);
 
-      // 2) Status aus Query-Parametern
-      const registered = qs.get('registered'); // "1" | "0" | null
-      const reason = qs.get('reason'); // optional: rate | dupe | …
-      const venue = qs.get('ven') || 'unbekannt';
+  // ------ Zustände
+  const STATES = {
+    success: {
+      title: 'Danke für deinen Besuch!',
+      lead : 'Dein Scan wurde registriert. Viel Spaß beim Essen!',
+      status: 'Erfolgreich',
+      badge : ['ok','✓ Registrierung erfolgreich'],
+      tips  : `
+        <ul style="margin:0 0 0 18px;padding:0">
+          <li>Zeig diese Bestätigung bei Bedarf am Tresen.</li>
+          <li>Bewahre diese Seite nicht auf – beim nächsten Besuch einfach neu scannen.</li>
+        </ul>`
+    },
+    dupe: {
+      title: 'Heute bereits registriert',
+      lead : 'Für fairen Betrieb zählt pro Gerät & Token nur eine Registrierung pro Tag.',
+      status: 'Nicht gespeichert (dupe)',
+      badge : ['err','⚠️ Heute bereits registriert'],
+      tips  : `
+        <b>Was tun?</b>
+        <ul style="margin:0 0 0 18px;padding:0">
+          <li>Später erneut scannen (morgen wieder möglich).</li>
+          <li>Falls versehentlich: am Tresen melden.</li>
+        </ul>`
+    },
+    rate: {
+      title: 'Zu viele Scans',
+      lead : 'Kurzzeitig wurden zu viele Scans erkannt.',
+      status: 'Nicht gespeichert (rate)',
+      badge : ['err','⚠️ Zu viele Scans'],
+      tips  : `
+        <b>Was tun?</b>
+        <ul style="margin:0 0 0 18px;padding:0">
+          <li>Bitte 1–2 Minuten warten und erneut scannen.</li>
+          <li>Nur einmal pro Person scannen.</li>
+        </ul>`
+    },
+    invalid: {
+      title: 'Ungültiger QR',
+      lead : 'Dieser QR-Code ist nicht gültig.',
+      status: 'Nicht gespeichert (invalid)',
+      badge : ['err','⚠️ Ungültiger QR'],
+      tips  : `
+        <b>Mögliche Ursachen</b>
+        <ul style="margin:0 0 0 18px;padding:0">
+          <li>Veraltetes/abfotografiertes Poster.</li>
+          <li>Falscher Link (Parameter fehlen).</li>
+        </ul>
+        <b>Maßnahme</b>: Bitte einen aktuellen QR am Tresen scannen.`
+    },
+    expired: {
+      title: 'QR abgelaufen',
+      lead : 'Der Token ist abgelaufen (Zeitfenster überschritten).',
+      status: 'Nicht gespeichert (expired)',
+      badge : ['err','⚠️ QR abgelaufen'],
+      tips  : `Bitte den <b>aktuellen</b> QR am Tresen scannen.`
+    },
+    inactive: {
+      title: 'QR deaktiviert',
+      lead : 'Dieser Token ist aktuell nicht aktiv.',
+      status: 'Nicht gespeichert (inactive)',
+      badge : ['err','⚠️ QR deaktiviert'],
+      tips  : `Bitte neuen QR am Tresen anfordern.`
+    },
+    venue: {
+      title: 'Falscher Standort',
+      lead : 'Dieser QR gilt nicht für diesen Standort.',
+      status: 'Nicht gespeichert (venue)',
+      badge : ['err','⚠️ Standort stimmt nicht'],
+      tips  : `Bitte den QR für <b>${ven}</b> verwenden.`
+    },
+    param: {
+      title: 'Technischer Fehler (Parameter)',
+      lead : 'Es fehlen notwendige Angaben im Link.',
+      status: 'Nicht gespeichert (param)',
+      badge : ['err','⚠️ Parameter fehlen'],
+      tips  : `Bitte QR erneut scannen. Wenn das Problem bleibt, am Tresen melden.`
+    },
+    server: {
+      title: 'Server-Fehler',
+      lead : 'Der Eintrag konnte gerade nicht gespeichert werden.',
+      status: 'Nicht gespeichert (server)',
+      badge : ['err','⚠️ Vorübergehender Fehler'],
+      tips  : `Bitte in wenigen Minuten erneut scannen.`
+    },
+    unknown: {
+      title: 'Hinweis',
+      lead : 'Diese Seite wurde ohne klaren Status geöffnet.',
+      status: 'Unbekannt',
+      badge : ['warn','ℹ️ Unbekannter Status'],
+      tips  : `Bitte zurück und QR erneut scannen.`
+    }
+  };
 
-      // 3) UI setzen
-      const statusBadge = document.getElementById('statusBadge');
-      const kv_status = document.getElementById('kv_status');
-      const kv_venue = document.getElementById('kv_venue');
-      const kv_time  = document.getElementById('kv_time');
-      const kv_cid   = document.getElementById('kv_cid');
-      const title    = document.getElementById('title');
-      const lead     = document.getElementById('lead');
+  // ------ Logik: Status bestimmen
+  let view;
+  if (registered === '1') {
+    view = STATES.success;
+  } else if (registered === '0') {
+    // Grund auswerten
+    switch ((reason||'').toLowerCase()) {
+      case 'dupe': view = STATES.dupe; break;
+      case 'rate': view = STATES.rate; break;
+      case 'invalid': view = STATES.invalid; break;
+      case 'expired': view = STATES.expired; break;
+      case 'inactive': view = STATES.inactive; break;
+      case 'venue': view = STATES.venue; break;
+      case 'param': view = STATES.param; break;
+      case 'server': view = STATES.server; break;
+      default: view = STATES.unknown; break;
+    }
+  } else {
+    view = STATES.unknown;
+  }
 
-      const now = new Date();
-      kv_time.textContent = now.toLocaleString();
+  // ------ UI setzen
+  document.getElementById('title').textContent = 'CrunchClub – ' + view.title;
+  document.getElementById('lead').textContent  = view.lead;
+  document.getElementById('kv_status').textContent = view.status;
+  badge(view.badge[0], view.badge[1]);
+  advice(view.tips);
 
-      kv_venue.textContent = venue;
-      kv_cid.textContent = clientId;
+  // ------ Aktionen
+  document.getElementById('retry').addEventListener('click', ()=> {
+    // Wenn wir vom Script kamen, reicht reload; sonst zur Startseite
+    if (document.referrer && /script\.google\.com/.test(document.referrer)) {
+      location.reload();
+    } else {
+      history.length > 1 ? history.back() : location.href = '/';
+    }
+  });
+  document.getElementById('reset').addEventListener('click', ()=> {
+    cidReset();
+    alert('Client-ID zurückgesetzt. Bitte erneut scannen.');
+    location.reload();
+  });
 
-      let statusText = 'Unbekannt';
-      if (registered === '1') {
-        statusBadge.classList.add('ok');
-        statusBadge.textContent = '✓ Registrierung erfolgreich';
-        statusText = 'Erfolgreich';
-        title.textContent = 'CrunchClub – Danke für deinen Besuch!';
-        lead.textContent = 'Dein Scan wurde registriert. Viel Spaß beim Essen!';
-      } else if (registered === '0') {
-        statusBadge.classList.add('err');
-        statusBadge.textContent = '⚠️ Registrierung nicht gespeichert';
-        statusText = 'Nicht gespeichert' + (reason ? ` (${reason})` : '');
-        title.textContent = 'CrunchClub – Hinweis';
-        lead.textContent = reason === 'rate'
-          ? 'Zu viele Scans in kurzer Zeit. Bitte später erneut versuchen.'
-          : reason === 'dupe'
-            ? 'Heute bereits registriert.'
-            : 'Scan konnte nicht gespeichert werden.';
-      } else {
-        statusBadge.classList.add('warn');
-        statusBadge.textContent = 'ℹ️ Ohne Statusparameter';
-        statusText = 'Unbekannt';
-        lead.textContent = 'Diese Seite wurde direkt aufgerufen.';
-      }
-      kv_status.textContent = statusText;
+  // ------ Debug (nur wenn ?debug=1 oder localStorage flag)
+  const debugEnabled = qs.get('debug') === '1' || localStorage.getItem('cc_debug') === '1';
+  if (!debugEnabled) document.getElementById('debugBox').style.display = 'none';
 
-      // 4) Debug: Query-Parameter anzeigen
-      const qp = {};
-      for (const [k,v] of qs.entries()) qp[k]=v;
-      document.getElementById('qp').textContent = JSON.stringify(qp, null, 2);
+  // Query-Parameter
+  const qp = {}; for (const [k,v] of qs.entries()) qp[k]=v;
+  set('qp', JSON.stringify({params: qp, referrer: document.referrer||null}, null, 2));
 
-      // 5) Debug: Geräteinfos sammeln (defensiv)
-      function safe(getter, fallback='—'){ try { const v = getter(); return (v===undefined||v===null||v==='') ? fallback : v; } catch(e){ return fallback; } }
-      const dbg = {
-        userAgent: safe(()=> navigator.userAgent),
-        platform: safe(()=> navigator.platform),
-        language: safe(()=> navigator.language),
-        languages: safe(()=> navigator.languages?.join(', ')),
-        vendor: safe(()=> navigator.vendor),
-        onLine: safe(()=> navigator.onLine),
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '—',
-        tzOffsetMin: (new Date()).getTimezoneOffset(),
-        screen: safe(()=> `${screen.width}x${screen.height} @${window.devicePixelRatio||1}`),
-        viewport: `${window.innerWidth}x${window.innerHeight}`,
-        cookiesEnabled: safe(()=> navigator.cookieEnabled),
-        storageEstimate: '…',
-        connection: safe(()=> {
-          const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-          if(!c) return 'n/a';
-          return `type=${c.effectiveType||'?'}, downlink=${c.downlink||'?'}Mb/s, rtt=${c.rtt||'?'}ms, saveData=${c.saveData||false}`;
-        }),
-        serviceWorker: 'serviceWorker' in navigator,
-        permissions: '…',
-        mediaDevices: '…',
-        referrer: document.referrer || '—',
-        visibility: document.visibilityState
-      };
+  // Lokaler Zustand
+  const state = {
+    time: new Date().toISOString(),
+    client_id: cid,
+    localStorage: Object.keys(localStorage||{}),
+    sessionStorage: Object.keys(sessionStorage||{})
+  };
+  set('state', JSON.stringify(state, null, 2));
 
-      // Storage estimate (optional)
-      if (navigator.storage && navigator.storage.estimate) {
-        navigator.storage.estimate().then(est => {
-          dbg.storageEstimate = `${Math.round((est.usage||0)/1024)}KB / ${Math.round((est.quota||0)/1024/1024)}MB`;
-          renderDbg();
-        });
-      }
+  // Browser
+  const ua = {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language,
+    online: navigator.onLine,
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    viewport: `${innerWidth}x${innerHeight}`
+  };
+  set('ua', JSON.stringify(ua, null, 2));
 
-      // Permissions (best effort)
-      async function getPermissions(){
-        if (!navigator.permissions || !navigator.permissions.query) return 'n/a';
-        const types = ['camera','microphone','geolocation','notifications','persistent-storage','background-sync','clipboard-read','clipboard-write'];
-        const out = {};
-        for (const t of types) {
-          try { const s = await navigator.permissions.query({name:t}); out[t] = s.state; }
-          catch(e){ out[t] = 'unsupported'; }
-        }
-        return out;
-      }
-
-      // Media devices (best effort)
-      async function getMediaDevices(){
-        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return 'n/a';
-        const list = await navigator.mediaDevices.enumerateDevices();
-        const cams = list.filter(d => d.kind === 'videoinput').length;
-        const mics = list.filter(d => d.kind === 'audioinput').length;
-        return { cameras:cams, microphones:mics, total:list.length };
-      }
-
-      function renderDbg(){
-        const grid = document.getElementById('dbgGrid');
-        grid.innerHTML = '';
-        for (const [k,v] of Object.entries(dbg)) {
-          const kEl = document.createElement('div'); kEl.textContent = k; kEl.style.color = '#64748b';
-          const vEl = document.createElement('div'); vEl.textContent = (typeof v === 'object') ? JSON.stringify(v) : String(v);
-          grid.appendChild(kEl); grid.appendChild(vEl);
-        }
-        // Lokaler Zustand
-        const localState = {
-          client_id: clientId,
-          localStorage_keys: safe(()=> Object.keys(localStorage)),
-          sessionStorage_keys: safe(()=> Object.keys(sessionStorage))
-        };
-        document.getElementById('localState').textContent = JSON.stringify(localState, null, 2);
-      }
-
-      // Initial render (partial), then async enrich
-      renderDbg();
-      getPermissions().then(p => { dbg.permissions = p; renderDbg(); }).catch(()=>{});
-      getMediaDevices().then(m => { dbg.mediaDevices = m; renderDbg(); }).catch(()=>{});
-
-      // 6) Buttons
-      document.getElementById('copyJson').addEventListener('click', async ()=>{
-        const exportObj = {
-          timestamp: new Date().toISOString(),
-          params: qp,
-          status: { registered, reason, venue },
-          client_id: clientId,
-          debug: dbg
-        };
-        const txt = JSON.stringify(exportObj, null, 2);
-        try {
-          await navigator.clipboard.writeText(txt);
-          alert('Debug-JSON in die Zwischenablage kopiert.');
-        } catch(e) {
-          // Fallback
-          const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
-          try { document.execCommand('copy'); alert('Debug-JSON kopiert (Fallback).'); } catch(_) { alert('Kopieren nicht erlaubt.'); }
-          ta.remove();
-        }
-      });
-
-      document.getElementById('resetCid').addEventListener('click', ()=>{
-        resetClientId();
-        alert('Client-ID zurückgesetzt. Seite lädt neu.');
-        location.reload();
-      });
-
-      document.getElementById('reload').addEventListener('click', ()=> location.reload(true));
-    })();
-  </script>
+  document.getElementById('copy').addEventListener('click', async ()=>{
+    const blob = {
+      status: { registered, reason, venue: ven },
+      qp, state, ua
+    };
+    const txt = JSON.stringify(blob, null, 2);
+    try { await navigator.clipboard.writeText(txt); alert('Debug-JSON kopiert.'); }
+    catch(e){ alert('Kopieren nicht erlaubt.'); }
+  });
+})();
+</script>
 </body>
 </html>
