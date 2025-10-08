@@ -5,79 +5,66 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>CrunchClub – Registrierung</title>
   <meta name="color-scheme" content="light dark">
-  <style>
-    :root{
-      --ok:#16a34a; --warn:#f59e0b; --err:#ef4444;
-      --bg:#0b0f1a; --fg:#e5e7eb; --muted:#9ca3af; --card:#101726; --border:#1f2937;
-    }
-    @media (prefers-color-scheme: light){
-      :root{ --bg:#f8fafc; --fg:#0f172a; --muted:#475569; --card:#ffffff; --border:#e2e8f0; }
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background:var(--bg); color:var(--fg);
-    }
-    .wrap{max-width:720px;margin:0 auto;padding:20px}
-    .card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px}
-    h1{margin:0 0 8px;font-size:22px}
-    .sub{color:var(--muted); font-size:13px}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid}
-    .b-ok{color:var(--ok);border-color:color-mix(in oklab, var(--ok) 60%, transparent)}
-    .b-warn{color:var(--warn);border-color:color-mix(in oklab, var(--warn) 60%, transparent)}
-    .b-err{color:var(--err);border-color:color-mix(in oklab, var(--err) 60%, transparent)}
-    .grid{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;margin:14px 0}
-    .k{color:var(--muted);font-size:13px}
-    .mono{font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
-    .hint{margin-top:8px}
-    .muted{color:var(--muted)}
-    .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-    button,a.btn{
-      appearance:none;border:1px solid var(--border);background:transparent;color:var(--fg);
-      padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:600
-    }
-    .btn-primary{background:var(--fg); color:var(--bg); border-color:var(--fg)}
-    footer{margin:18px 0;color:var(--muted);font-size:12px;text-align:center}
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <div class="wrap">
-    <header style="margin-bottom:14px">
-      <h1>CrunchClub – Registrierung</h1>
-      <div class="sub">Zwickau · anonym & ohne Anmeldung</div>
+    <header class="header">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🍜</div>
+        <div>
+          <h1>CrunchClub – Registrierung</h1>
+          <div class="sub">Zwickau · anonym & ohne Anmeldung</div>
+        </div>
+      </div>
+      <div class="divider" aria-hidden="true"></div>
     </header>
 
     <section class="card" id="panel">
       <div id="badge" class="badge">Status wird geprüft…</div>
 
-      <div class="grid" style="margin-top:12px">
-        <div class="k">Status</div><div id="kv_status">–</div>
-        <div class="k">Standort</div><div id="kv_venue">–</div>
-        <div class="k">Zeit</div><div id="kv_time">–</div>
-        <div class="k">Client-ID</div><div id="kv_cid" class="mono" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">–</div>
-        <div class="k">Code</div><div id="kv_token" class="mono">–</div>
-      </div>
+      <dl class="grid">
+        <dt>Status</dt><dd id="kv_status">–</dd>
+        <dt>Standort</dt><dd id="kv_venue">–</dd>
+        <dt>Zeit</dt><dd id="kv_time">–</dd>
+        <dt>Client-ID</dt><dd id="kv_cid" class="mono ellipsis">–</dd>
+        <dt>Code</dt><dd id="kv_token" class="mono">–</dd>
+      </dl>
 
-      <h2 id="headline" style="margin:6px 0 6px;font-size:18px">–</h2>
-      <div id="explain" class="hint">–</div>
+      <h2 id="headline" class="headline">–</h2>
+      <div id="explain" class="explain">–</div>
 
-      <div id="counters" class="hint muted" style="display:none"></div>
+      <div id="counters" class="counters" hidden></div>
 
-      <div class="row">
-        <button id="retry" class="btn-primary">Erneut scannen</button>
-        <button id="reset">Client-ID zurücksetzen</button>
+      <!-- Hinweisblock für erste Registrierung -->
+      <aside id="firstTimeNotice" class="notice" hidden>
+        <p><b>Deine persönliche CrunchClub-ID</b> (wie eine digitale Stempelkarte):</p>
+        <code id="userId" class="mono blockcode"></code>
+        <div class="row">
+          <button id="copyBtn" class="btn btn-primary">📋 ID kopieren</button>
+          <button id="saveNoteBtn" class="btn">Als Notiz speichern (Tipp)</button>
+        </div>
+        <p class="muted small">
+          Diese ID bitte gut aufbewahren. Mit ihr bleibt deine Stempelkarte erhalten.
+          Geht sie verloren (neues Gerät/Inkognito), beginnt die Karte von vorne.
+        </p>
+      </aside>
+
+      <div class="row actions">
+        <button id="retry" class="btn btn-primary">Erneut scannen</button>
+        <button id="reset" class="btn">Client-ID zurücksetzen</button>
         <a class="btn" href="#hours">Öffnungszeiten</a>
         <a class="btn" href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener">Instagram</a>
       </div>
     </section>
 
-    <section id="hours" class="card" style="margin-top:12px">
+    <section id="hours" class="card">
       <strong>Öffnungszeiten</strong>
-      <div id="hoursGrid" class="grid" style="margin-top:8px"></div>
-      <div class="muted" style="font-size:12px;margin-top:6px">📍 Innere Schneeberger Str. 17, 08056 Zwickau</div>
+      <dl id="hoursGrid" class="grid hours"></dl>
+      <div class="muted small">📍 Innere Schneeberger Str. 17, 08056 Zwickau</div>
     </section>
 
-    <footer>
+    <footer class="footer">
       Es werden nur anonyme technische Daten verarbeitet (Zeit, Token, anonyme Client-ID). Kein Tracking über Websites hinweg.
     </footer>
   </div>
@@ -97,7 +84,7 @@
   };
   const resetCID = () => { try{ localStorage.removeItem('cc_client_id'); location.reload(); }catch{} };
 
-  // Hours
+  // Öffnungszeiten
   const HOURS = [
     ['Montag','11:00 – 21:00'],
     ['Dienstag','11:00 – 21:00'],
@@ -110,13 +97,13 @@
   const dayMap=[6,0,1,2,3,4,5];
   const todayIdx = dayMap[new Date().getDay()];
   $('hoursGrid').innerHTML = HOURS.map((d,i)=>`
-    <div class="k" style="${i===todayIdx?'font-weight:700;color:inherit':''}">${d[0]}</div>
-    <div style="${i===todayIdx?'font-weight:700':''}">${d[1]}</div>
+    <dt class="${i===todayIdx?'today':''}">${d[0]}</dt>
+    <dd class="${i===todayIdx?'today':''}">${d[1]}</dd>
   `).join('');
 
-  // Values from redirect
-  const registered = qs.get('registered'); // "1" | "0"
-  const state = (qs.get('state')||'').toLowerCase(); // new_member|welcome_back|already
+  // Query-Werte
+  const registered = qs.get('registered');
+  const state = (qs.get('state')||'').toLowerCase();
   const reason = (qs.get('reason')||'').toLowerCase();
   const ven = qs.get('ven') || 'crunchclub-zwickau';
   const tk  = qs.get('tk') || '';
@@ -125,59 +112,79 @@
   const tsc = Number(qs.get('tsc')||0);
   const camp= qs.get('camp') || '';
 
-  // Fill basics
+  // Basics
   $('kv_time').textContent  = new Date().toLocaleString('de-DE');
   $('kv_venue').textContent = ven;
-  $('kv_cid').textContent   = getCID();
+  const cid = getCID();
+  $('kv_cid').textContent   = cid;
   $('kv_token').textContent = tk || '—';
 
-  // Badge / copy text
-  const setBadge = (cls, text) => {
+  // Badge
+  const setBadge = (type, text) => {
     const b = $('badge');
-    b.className = `badge ${cls}`;
+    b.className = `badge ${type}`;
     b.textContent = text;
   };
 
-  // Render states
+  // Render States
   if (registered === '1') {
-    $('counters').style.display = 'block';
+    $('counters').hidden = false;
     $('counters').textContent = `Besuche gesamt: ${mt} • Einzigartige Codes: ${tt}` + (tk ? ` • Scans dieses Codes: ${tsc}`:'');
     switch (state) {
       case 'new_member':
-        setBadge('b-ok','✓ Registrierung erfolgreich (Erstbesuch)');
+        setBadge('badge-ok','✓ Registrierung erfolgreich (Erstbesuch)');
         $('kv_status').textContent = 'Neu registriert';
-        $('headline').textContent = 'Willkommen beim CrunchClub!';
-        $('explain').innerHTML = `Deine Mitgliedschaft wurde angelegt.${tk ? ' <span class="mono" style="padding:2px 6px;border:1px solid var(--border);border-radius:8px">Code: '+tk+'</span>':''}` + (camp? `<div class="muted" style="margin-top:6px">Kampagne: ${camp}</div>` : '');
+        $('headline').textContent  = 'Willkommen beim CrunchClub!';
+        $('explain').innerHTML     = `Deine Mitgliedschaft wurde angelegt.${tk ? ' <span class="mono chip">Code: '+tk+'</span>':''}` + (camp? `<div class="muted small" style="margin-top:6px">Kampagne: ${camp}</div>` : '');
+        // Hinweisblock
+        $('userId').textContent = cid;
+        $('firstTimeNotice').hidden = false;
+        $('copyBtn').onclick = () => navigator.clipboard.writeText(cid).then(()=> alert('ID kopiert!'));
+        $('saveNoteBtn').onclick = () => {
+          const title = 'CrunchClub-ID';
+          const body  = cid + '\\nHinweis: Diese ID ist deine digitale Stempelkarte.';
+          const blob = new Blob([body], {type:'text/plain'});
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `${title}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(a.href);
+        };
         break;
+
       case 'welcome_back':
-        setBadge('b-ok','✓ Welcome back – neuer Code gezählt');
+        setBadge('badge-ok','✓ Welcome back – neuer Code gezählt');
         $('kv_status').textContent = 'Welcome Back';
-        $('headline').textContent = 'Schön, dich wiederzusehen!';
-        $('explain').innerHTML = `Dieser Code ist neu für dich.${tk ? ' <span class="mono" style="padding:2px 6px;border:1px solid var(--border);border-radius:8px">Code: '+tk+'</span>':''}` + (camp? `<div class="muted" style="margin-top:6px">Kampagne: ${camp}</div>` : '');
+        $('headline').textContent  = 'Schön, dich wiederzusehen!';
+        $('explain').innerHTML     = `Dieser Code ist neu für dich.${tk ? ' <span class="mono chip">Code: '+tk+'</span>':''}` + (camp? `<div class="muted small" style="margin-top:6px">Kampagne: ${camp}</div>` : '');
         break;
+
       case 'already':
-        setBadge('b-warn','ℹ️ Code bereits eingelöst');
+        setBadge('badge-warn','ℹ️ Code bereits eingelöst');
         $('kv_status').textContent = 'Bereits eingelöst';
-        $('headline').textContent = 'Diesen Code hast du schon benutzt';
-        $('explain').innerHTML = `${tk ? '<span class="mono" style="padding:2px 6px;border:1px solid var(--border);border-radius:8px">Code: '+tk+'</span> ' : ''}Keine doppelte Gutschrift – beim nächsten Besuch bitte neuen QR scannen.`;
+        $('headline').textContent  = 'Diesen Code hast du schon benutzt';
+        $('explain').innerHTML     = `${tk ? '<span class="mono chip">Code: '+tk+'</span> ' : ''}Keine doppelte Gutschrift – beim nächsten Besuch bitte neuen QR scannen.`;
         break;
+
       default:
-        setBadge('b-warn','ℹ️ Unklarer Status');
+        setBadge('badge-warn','ℹ️ Unklarer Status');
         $('kv_status').textContent = 'Unbekannt';
         $('headline').textContent  = 'Bitte QR erneut scannen';
         $('explain').textContent   = 'Diese Seite wurde ohne klaren Status aufgerufen.';
     }
   } else {
     const map = {
-      rate:   ['b-err','⚠️ Zu viele Scans','Kurz warten und erneut scannen','Bitte 1–2 Minuten warten und dann erneut versuchen.'],
-      venue:  ['b-err','⚠️ Falscher Standort','Dieser QR gilt hier nicht','Bitte den QR für diesen Standort verwenden.'],
-      invalid:['b-err','⚠️ QR ungültig','Dieser QR ist nicht gültig','Der QR ist veraltet oder fehlerhaft. Bitte aktuellen QR scannen.'],
-      expired:['b-err','⚠️ QR abgelaufen','Dieser QR ist abgelaufen','Bitte aktuellen QR am Tresen verwenden.'],
-      inactive:['b-err','⚠️ QR deaktiviert','Dieser QR ist deaktiviert','Bitte neuen QR am Tresen anfordern.'],
-      param: ['b-err','⚠️ Parameter fehlen','Ungültiger Aufruf','Bitte QR erneut scannen.'],
-      server:['b-err','⚠️ Vorübergehender Fehler','Da ist etwas schiefgelaufen','Bitte in wenigen Minuten erneut versuchen.'],
+      rate:   ['badge-err','⚠️ Zu viele Scans','Kurz warten und erneut scannen','Bitte 1–2 Minuten warten und dann erneut versuchen.'],
+      venue:  ['badge-err','⚠️ Falscher Standort','Dieser QR gilt hier nicht','Bitte den QR für diesen Standort verwenden.'],
+      invalid:['badge-err','⚠️ QR ungültig','Dieser QR ist nicht gültig','Der QR ist veraltet oder fehlerhaft. Bitte aktuellen QR scannen.'],
+      expired:['badge-err','⚠️ QR abgelaufen','Dieser QR ist abgelaufen','Bitte aktuellen QR am Tresen verwenden.'],
+      inactive:['badge-err','⚠️ QR deaktiviert','Dieser QR ist deaktiviert','Bitte neuen QR am Tresen anfordern.'],
+      param:  ['badge-err','⚠️ Parameter fehlen','Ungültiger Aufruf','Bitte QR erneut scannen.'],
+      server: ['badge-err','⚠️ Vorübergehender Fehler','Da ist etwas schiefgelaufen','Bitte in wenigen Minuten erneut versuchen.'],
     };
-    const v = map[reason] || ['b-warn','ℹ️ Unklarer Status','Bitte QR erneut scannen','Diese Seite wurde ohne klaren Status geöffnet.'];
+    const v = map[reason] || ['badge-warn','ℹ️ Unklarer Status','Bitte QR erneut scannen','Diese Seite wurde ohne klaren Status geöffnet.'];
     setBadge(v[0], v[1]);
     $('kv_status').textContent = v[1].replace(/^⚠️\s*/,'');
     $('headline').textContent  = v[2];
