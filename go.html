@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CrunchClub · Weiterleitung…</title>
+<style>
+  body {
+    margin:0;
+    display:grid;
+    place-items:center;
+    height:100svh;
+    font:16px system-ui, sans-serif;
+    background:#0b0f1a;
+    color:#e5e7eb;
+  }
+
+  .card {
+    padding:24px 20px;
+    border-radius:16px;
+    border:1px solid #1f2937;
+    background:#101726;
+    max-width:480px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .badge {
+    width:100px;
+    height:100px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #dc2626, #7f1d1d);
+    display:grid;
+    place-items:center;
+    font-size:42px;
+    box-shadow:0 0 18px rgba(220,38,38,.4), inset 0 0 12px rgba(0,0,0,.5);
+    color:#fff;
+    font-weight:900;
+    letter-spacing:-1px;
+    text-shadow:0 2px 4px rgba(0,0,0,.5);
+  }
+
+  .m { font-size:14px;color:#9ca3af }
+</style>
+<body>
+  <div class="card">
+    <div class="badge">🍜</div>
+    <b>CrunchClub</b>
+    <div class="m">Sichere Weiterleitung …</div>
+    <div id="msg" class="m" style="margin-top:8px"></div>
+  </div>
+
+<script>
+(function(){
+  const Q = new URLSearchParams(location.search);
+  const VENUE = Q.get('venue_id') || 'crunchclub-zwickau';
+  const TOKEN = Q.get('token') || '';
+  const APP  = 'https://script.google.com/macros/s/AKfycbzdDii900AOXGpJcp1kMnbV6Hk7VwMBMVHFKKceldOtGbamGqXRgzhR341mEDeCgrQ/exec';
+
+  function getCID(){
+    try{
+      let id = localStorage.getItem('cc_client_id');
+      if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
+      return id;
+    }catch(e){ return ''; }
+  }
+
+  const cid = encodeURIComponent(getCID());
+  const ua  = encodeURIComponent(navigator.userAgent || '');
+
+  if(!TOKEN){
+    document.getElementById('msg').textContent = 'Fehlender Token – bitte QR erneut scannen.';
+    return;
+  }
+
+  const url = `${APP}?venue_id=${encodeURIComponent(VENUE)}&token=${encodeURIComponent(TOKEN)}&client_id=${cid}&ua=${ua}`;
+  document.getElementById('msg').textContent = 'Verbinde …';
+  location.replace(url);
+})();
+</script>
+</body>
+</html>
