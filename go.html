@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CrunchClub · Weiterleitung…</title>
+<style>
+  body{margin:0;display:grid;place-items:center;height:100svh;font:16px system-ui;background:#0b0f1a;color:#e5e7eb}
+  .card{padding:18px 20px;border-radius:12px;border:1px solid #1f2937;background:#101726;max-width:520px}
+  .m{font-size:14px;color:#9ca3af}
+</style>
+<body>
+  <div class="card">
+    <b>CrunchClub</b><div class="m">Sichere Weiterleitung …</div>
+    <div id="msg" class="m" style="margin-top:8px"></div>
+  </div>
+<script>
+(function(){
+  const Q = new URLSearchParams(location.search);
+  const VENUE = Q.get('venue_id') || 'crunchclub-zwickau';
+  const TOKEN = Q.get('token') || '';
+  const APP  = 'https://script.google.com/macros/s/AKfycbzdDii900AOXGpJcp1kMnbV6Hk7VwMBMVHFKKceldOtGbamGqXRgzhR341mEDeCgrQ/exec'; // deine aktuelle WebApp-URL
+
+  // 1) client_id aus localStorage (pro Browser/Device stabil)
+  function getCID(){
+    try{
+      let id = localStorage.getItem('cc_client_id');
+      if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
+      return id;
+    }catch(e){ return ''; }
+  }
+
+  // 2) defensiv encoden
+  const cid = encodeURIComponent(getCID());
+  const ua  = encodeURIComponent(navigator.userAgent || '');
+
+  if(!TOKEN){
+    document.getElementById('msg').textContent = 'Fehlender Token – bitte QR erneut scannen.';
+    return;
+  }
+
+  // 3) weiterleiten zum Apps Script inkl. Fingerprint-Daten
+  const url = `${APP}?venue_id=${encodeURIComponent(VENUE)}&token=${encodeURIComponent(TOKEN)}&client_id=${cid}&ua=${ua}`;
+  document.getElementById('msg').textContent = 'Verbinde …';
+  location.replace(url);
+})();
+</script>
+</body>
+</html>
