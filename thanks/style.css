@@ -1,0 +1,224 @@
+:root{
+  /* Farbschema – Ramen/Japan inspiriert */
+  --bg: #0b0f1a;
+  --fg: #e6e7ea;
+  --muted: #9aa3b2;
+  --card: #0f1626;
+  --border: #1e2637;
+
+  --red: #dc2626;       /* Warn/Fehler (rote Hanko-Anmutung) */
+  --amber: #f59e0b;     /* Hinweis */
+  --green: #16a34a;     /* Erfolg */
+  --accent: #b91c1c;    /* Akzentrot (Japan-Flagge/Hanko) */
+  --ink: #1b2231;       /* Tinte */
+}
+
+@media (prefers-color-scheme: light){
+  :root{
+    --bg: #f7f7fb;
+    --fg: #0f172a;
+    --muted: #475569;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --ink: #0f172a;
+  }
+}
+
+* { box-sizing: border-box }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* zarte japanische Wellen (Seigaiha) per SVG-Data-URI */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .07;
+  background-image: url("data:image/svg+xml,%3Csvg width='72' height='36' viewBox='0 0 72 36' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Cpath d='M36 36c-9.94 0-18-8.06-18-18H6c0 16.57 13.43 30 30 30s30-13.43 30-30H54c0 9.94-8.06 18-18 18z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 180px 90px;
+}
+
+.wrap{
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Kopf mit dünnem roten Akzent und „Kalligrafie“-Trenner */
+.header .brand{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header .logo{
+  width: 44px; height: 44px;
+  display: grid; place-items:center;
+  border-radius: 12px;
+  background: radial-gradient(120% 120% at 30% 20%, rgba(185,28,28,.35), transparent 60%),
+              linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.0));
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 2px rgba(185,28,28,.1) inset;
+}
+h1{
+  margin: 0 0 4px;
+  font-size: 22px;
+  letter-spacing: .2px;
+}
+.sub{
+  color: var(--muted);
+  font-size: 13px;
+}
+.divider{
+  margin-top: 10px;
+  height: 10px;
+  background:
+    radial-gradient(6px 6px at 10% 50%, var(--accent) 35%, transparent 40%) repeat-x;
+  background-size: 16px 10px;
+  mask-image: linear-gradient(90deg, transparent 0, black 8%, black 92%, transparent 100%);
+  opacity: .6;
+}
+
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 14px;
+  box-shadow: 0 12px 30px rgba(10,12,20,.25);
+}
+
+/* Badge als „Stempel“ */
+.badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  font-weight: 700;
+  letter-spacing: .2px;
+  position: relative;
+  background: rgba(0,0,0,.15);
+}
+.badge::after{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:999px;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,.08) inset,
+    0 2px 0 rgba(0,0,0,.15) inset;
+  pointer-events:none;
+}
+/* Stempel-Farbvarianten */
+.badge-ok  { color: var(--green); border-color: color-mix(in oklab, var(--green) 70%, transparent); background: rgba(22,163,74,.08); }
+.badge-warn{ color: var(--amber); border-color: color-mix(in oklab, var(--amber) 70%, transparent); background: rgba(245,158,11,.08); }
+.badge-err { color: var(--red);   border-color: color-mix(in oklab, var(--red) 70%, transparent);   background: rgba(220,38,38,.08); }
+
+.grid{
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px 14px;
+  margin: 14px 0 10px;
+}
+.grid dt{
+  color: var(--muted);
+  font-size: 13px;
+}
+.grid dd{
+  margin: 0;
+  font-weight: 600;
+}
+.grid.hours dt,
+.grid.hours dd{ font-weight: 500; }
+.today{ color: var(--fg); font-weight: 800; }
+
+.headline{
+  margin: 8px 0 6px;
+  font-size: 18px;
+}
+.explain{ color: var(--fg); }
+.counters{
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.mono{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+.blockcode{
+  display: block;
+  padding: 10px 12px;
+  background: rgba(0,0,0,.2);
+  border: 1px dashed color-mix(in oklab, var(--accent) 55%, var(--border));
+  border-radius: 10px;
+  word-break: break-all;
+}
+
+.row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.actions{ margin-top: 16px; }
+
+.btn{
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+  padding: 9px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .02s ease, box-shadow .2s ease, background-color .2s ease;
+  box-shadow: 0 1px 0 rgba(0,0,0,.15);
+}
+.btn:hover{ background: rgba(255,255,255,.04); }
+.btn:active{ transform: translateY(1px); }
+.btn-primary{
+  background: radial-gradient(120% 120% at 30% 20%, rgba(185,28,28,.28), transparent 60%), var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.notice{
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(185,28,28,.06), rgba(0,0,0,0));
+}
+.muted{ color: var(--muted); }
+.small{ font-size: 12px; }
+.ellipsis{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip{
+  display: inline-block;
+  padding: 2px 8px;
+  margin-left: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(255,255,255,.06);
+}
+
+.footer{
+  margin: 18px 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 540px){
+  .grid{ grid-template-columns: 120px 1fr; }
+  .header .logo{ width:38px; height:38px; }
+}
