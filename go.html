@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CrunchClub · Weiterleitung…</title>
+<style>
+  :root{
+    --bg1:#0c0f17; --bg2:#0a0e15; --card:#101726; --stroke:#1f2937; --muted:#9ca3af; --fg:#e5e7eb;
+    --accent:#f59e0b; /* Standard: Ramen */
+  }
+  html,body{height:100%;margin:0;background:#0b0f1a;color:var(--fg);font:16px system-ui, sans-serif}
+  /* ==== Loader ==== */
+  .pre{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;backdrop-filter:blur(3px)}
+  .grid{position:absolute;inset:0;opacity:.15;pointer-events:none}
+  .grid:before{content:"";position:absolute;inset:-200% -200% 0 -200%;
+    background:radial-gradient(circle at 24px 24px,#0f1a2a 2px,transparent 3px) 0 0/48px 48px;
+    animation: drift 18s linear infinite}
+  @keyframes drift{to{transform:translateY(-48px)}}
+  .loader-card{background:rgba(16,23,38,.85);border:1px solid var(--stroke);border-radius:16px;padding:22px;box-shadow:0 10px 32px rgba(0,0,0,.40);min-width:280px}
+  .top{display:flex;gap:14px;align-items:center}
+  .title{font-weight:700}
+  .muted{color:var(--muted)}
+  .badge{margin-left:auto;font-size:12px;border:1px solid var(--stroke);border-radius:999px;padding:4px 8px;background:#0b1320}
+  .meter{height:6px;background:#0f1a2a;border:1px solid #192334;border-radius:999px;overflow:hidden;margin-top:12px}
+  .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#60efff);transition:width .2s ease}
+  .pre.hide{animation:fade .6s ease forwards}
+  @keyframes fade{to{opacity:0;visibility:hidden}}
+  .icon{width:54px;height:54px;display:grid;place-items:center}
+  [data-theme="ramen"]{--accent:#f59e0b}
+  [data-theme="taco"]{--accent:#22c55e}
+  [data-theme="fries"]{--accent:#fb7185}
+  /* Simple ramen steam icon */
+  .ramen-steam path{stroke:var(--accent);stroke-width:2;fill:none;stroke-linecap:round;stroke-dasharray:40 120;animation:steam 2s ease-in-out infinite}
+  .ramen-steam path:nth-child(2){animation-delay:.25s}
+  .ramen-steam path:nth-child(3){animation-delay:.5s}
+  @keyframes steam{0%{stroke-dashoffset:0;opacity:.2}50%{opacity:1}100%{stroke-dashoffset:-160;opacity:.2}}
+  .ramen-bowl{fill:none;stroke:#3b4a5e;stroke-width:2}
+  /* ==== Content Card (dein CrunchClub) ==== */
+  .card {
+    padding:24px 20px;
+    border-radius:16px;
+    border:1px solid #1f2937;
+    background:#101726;
+    max-width:480px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    opacity:0; transform:translateY(8px);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .card.show{opacity:1;transform:none}
+  .badge-main {
+    width:100px;height:100px;margin:0 auto 16px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #dc2626, #7f1d1d);
+    display:grid;place-items:center;
+    font-size:42px;font-weight:900;
+    box-shadow:0 0 18px rgba(220,38,38,.4), inset 0 0 12px rgba(0,0,0,.5);
+    color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.5);
+  }
+  .m { font-size:14px;color:#9ca3af }
+</style>
+<body>
+  <!-- Loader -->
+  <div class="pre" id="pre">
+    <div class="grid"></div>
+    <div class="loader-card" id="loader" data-theme="ramen">
+      <div class="top">
+        <div class="icon">
+          <svg width="54" height="54" viewBox="0 0 64 64">
+            <g class="ramen-steam">
+              <path d="M18 22 C22 18, 28 18, 32 22"/>
+              <path d="M26 18 C30 14, 36 14, 40 18"/>
+              <path d="M34 22 C38 18, 44 18, 48 22"/>
+            </g>
+            <path class="ramen-bowl" d="M14 32 q18 12 36 0 v4 a22 22 0 0 1-36 0z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="title" id="ltitle">Küche heizt an…</div>
+          <div class="muted" id="lsub">Ramen wird vorbereitet</div>
+        </div>
+        <span class="badge" id="lbadge">0%</span>
+      </div>
+      <div class="meter"><div class="bar" id="lbar"></div></div>
+    </div>
+  </div>
+
+  <!-- Deine bestehende CrunchClub-Karte -->
+  <div class="card" id="mainCard">
+    <div class="badge-main">🍜</div>
+    <b>CrunchClub</b>
+    <div class="m">Sichere Weiterleitung …</div>
+    <div id="msg" class="m" style="margin-top:8px"></div>
+  </div>
+
+<script>
+(function(){
+  // Theme wählen per ?theme=
+  const params = new URLSearchParams(location.search);
+  const theme = (params.get('theme')||'ramen').toLowerCase();
+  document.getElementById('loader').setAttribute('data-theme', theme);
+
+  // Progress simulieren
+  let p=0, bar=document.getElementById('lbar'), badge=document.getElementById('lbadge');
+  const tick=setInterval(()=>{
+    p=Math.min(100,p+Math.ceil(10+Math.random()*15));
+    bar.style.width=p+'%'; badge.textContent=p+'%';
+    if(p>=100){
+      clearInterval(tick);
+      setTimeout(()=>{
+        document.getElementById('pre').classList.add('hide');
+        document.getElementById('mainCard').classList.add('show');
+      },200);
+    }
+  },200);
+
+  // Dein Weiterleitungs-Skript
+  const Q = new URLSearchParams(location.search);
+  const VENUE = Q.get('venue_id') || 'crunchclub-zwickau';
+  const TOKEN = Q.get('token') || '';
+  const APP  = 'https://script.google.com/macros/s/AKfycbzdDii900AOXGpJcp1kMnbV6Hk7VwMBMVHFKKceldOtGbamGqXRgzhR341mEDeCgrQ/exec';
+
+  function getCID(){
+    try{
+      let id=localStorage.getItem('cc_client_id');
+      if(!id){id=crypto.randomUUID();localStorage.setItem('cc_client_id',id);}
+      return id;
+    }catch(e){return '';}
+  }
+
+  const cid=encodeURIComponent(getCID());
+  const ua=encodeURIComponent(navigator.userAgent||'');
+
+  if(!TOKEN){
+    document.getElementById('msg').textContent='Fehlender Token – bitte QR erneut scannen.';
+    return;
+  }
+
+  const url=`${APP}?venue_id=${encodeURIComponent(VENUE)}&token=${encodeURIComponent(TOKEN)}&client_id=${cid}&ua=${ua}`;
+  document.getElementById('msg').textContent='Verbinde …';
+  location.replace(url);
+})();
+</script>
+</body>
+</html>
