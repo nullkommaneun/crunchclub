@@ -4,37 +4,356 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>CrunchClub – Registrierung</title>
+<meta name="color-scheme" content="light dark">
 <meta http-equiv="Cache-Control" content="no-store" />
 <style>
-  :root{
-    --ok:#16a34a; --warn:#f59e0b; --err:#dc2626; --fg:#0f172a; --muted:#64748b;
-    --bg:#f8fafc; --card:#fff; --border:#e2e8f0;
+  /* ========= Design-System ========= */
+  :root {
+    --bg: #0b0f1a;            /* dunkler, satter Hintergrund */
+    --panel: #0f1629;         /* Kartenfläche */
+    --glass: rgba(255,255,255,.06);
+    --text: #e5e7eb;
+    --muted: #96a0b5;
+    --ok: #22c55e;
+    --warn: #f59e0b;
+    --err: #ef4444;
+    --brand1: #06b6d4;        /* Neon Cyan */
+    --brand2: #a855f7;        /* Neon Violett */
+    --accent: #67e8f9;
+    --border: rgba(255,255,255,.14);
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --round: 16px;
   }
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
-    font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:880px;margin:32px auto;padding:0 16px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;
-    box-shadow:0 1px 2px rgba(0,0,0,.04)}
-  h1{margin:6px 0 8px;font-size:1.6rem}
-  p.lead{margin:0;color:var(--muted)}
-  .status{display:inline-flex;align-items:center;gap:.5rem;font-weight:700;
-    padding:6px 12px;border-radius:999px;border:1px solid var(--border)}
-  .ok{background:#ecfdf5;color:var(--ok);border-color:#bbf7d0}
-  .warn{background:#fffbeb;color:#a16207;border-color:#fde68a}
-  .err{background:#fef2f2;color:var(--err);border-color:#fecaca}
-  .grid{display:grid;grid-template-columns:160px 1fr;gap:10px 18px;margin:18px 0}
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #0b0f1a; } /* Wir bleiben bewusst dark für Neon-Brand */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font:16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+
+  /* ========= Header / Hero ========= */
+  .hero{
+    position:relative;border-radius:calc(var(--round) * 1.2);
+    padding:20px;border:1px solid var(--border);overflow:hidden;background:linear-gradient(135deg, rgba(168,85,247,.06), rgba(6,182,212,.06));
+  }
+  .brand-row{display:flex;align-items:center;gap:14px}
+  .logo{
+    width:52px;height:52px;border-radius:12px;overflow:hidden;flex:0 0 auto;
+    background: radial-gradient(120% 120% at 10% 10%, #ffffff22 0%, #00000000 60%), #0c1324;
+    border:1px solid var(--border);
+  }
+  .logo img{width:100%;height:100%;object-fit:cover;display:block}
+  .title{font-size:1.7rem;margin:0;letter-spacing:.3px}
+  .subtitle{margin:0;color:var(--muted)}
+
+  /* Glowing border */
+  .glow{
+    position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;
+    background:
+      radial-gradient(40% 60% at 10% 10%, rgba(6,182,212,.25), transparent 60%),
+      radial-gradient(50% 70% at 90% 20%, rgba(168,85,247,.25), transparent 70%);
+    filter: blur(30px); opacity:.7;
+  }
+
+  /* ========= Status Card ========= */
+  .card{
+    margin-top:18px;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.04));
+    border:1px solid var(--border); border-radius:var(--round); padding:20px; box-shadow:var(--shadow);
+    backdrop-filter: blur(10px);
+  }
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:860px){.row{grid-template-columns:1fr}}
+  .statusBadge{
+    display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius:999px;
+    border:1px solid var(--border); background:var(--glass); font-weight:700;
+  }
+  .ok{ color:var(--ok); border-color:#1f8a4a}
+  .warn{ color:var(--warn); border-color:#a96f07}
+  .err{ color:var(--err); border-color:#b33636}
+
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:8px 16px;margin-top:14px}
   .k{color:var(--muted)}
   .hr{height:1px;background:var(--border);margin:18px 0}
-  .tips{background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:12px;padding:12px}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-  .btn{appearance:none;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;color:#fff;background:#111827}
-  .btn.secondary{background:#334155}
-  details.debug{margin-top:16px}
-  details.debug>summary{cursor:pointer;font-weight:600}
-  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.9rem}
-  pre{background:#0b1020;color:#e5e7eb;border-radius:10px;padding:12px;overflow:auto}
-  a{color:#0ea5e9;text-decoration:none} a:hover{text-decoration:underline}
+
+  /* ========= CTA Buttons ========= */
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    appearance:none;border:0;border-radius:12px;padding:12px 16px;cursor:pointer;color:#061018;
+    background: linear-gradient(135deg, var(--brand1), var(--brand2));
+    font-weight:700; box-shadow: 0 6px 18px rgba(6,182,212,.35);
+  }
+  .btn.secondary{
+    color:var(--text);
+    background:linear-gradient(135deg, #111827, #0b1222);
+    border:1px solid var(--border); box-shadow:none;
+  }
+
+  /* ========= Info Leiste ========= */
+  .infobar{
+    margin-top:18px; display:grid; grid-template-columns:2fr 1fr; gap:14px;
+  }
+  @media (max-width:860px){.infobar{grid-template-columns:1fr}}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.035));
+    border:1px solid var(--border); border-radius:var(--round); padding:16px}
+  .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass);border:1px solid var(--border);margin:4px 6px 0 0}
+  .hours{display:grid;grid-template-columns:130px 1fr;gap:8px 14px;margin-top:8px}
+  .open{color:var(--ok);font-weight:700}
+
+  /* ========= Speisekarten-Teaser ========= */
+  .menu-strip{display:flex;gap:10px;overflow:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+  .tile{
+    min-width:230px;border-radius:14px;border:1px solid var(--border);scroll-snap-align:start;
+    background:#0c1324;overflow:hidden; position:relative;
+  }
+  .tile img{width:100%;height:150px;object-fit:cover;display:block}
+  .tile h4{margin:10px 12px 6px 12px;font-size:1.05rem}
+  .tile p{margin:0 12px 12px 12px;color:var(--muted);font-size:.95rem}
+  .price{position:absolute;top:10px;right:10px;background:var(--glass);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
+
+  /* ========= Instagram Grid ========= */
+  .iggrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  @media (max-width:1200px){.iggrid{grid-template-columns:repeat(4,1fr)}}
+  @media (max-width:780px){.iggrid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:520px){.iggrid{grid-template-columns:repeat(2,1fr)}}
+  .iggrid a{display:block;aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:#0c1324}
+  .iggrid img{width:100%;height:100%;object-fit:cover;display:block;transition: transform .35s ease}
+  .iggrid a:hover img{transform: scale(1.05)}
+
+  /* ========= Check Animation ========= */
+  .check{
+    width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;
+    background:radial-gradient(60% 60% at 50% 50%, #22c55e 0%, #0b1b12 70%);
+    box-shadow:0 0 25px rgba(34,197,94,.55), inset 0 0 14px rgba(34,197,94,.65);
+    animation:pop .6s ease both
+  }
+  .check svg{fill:#031a0f}
+  @keyframes pop{0%{transform:scale(.6);opacity:.6}100%{transform:scale(1);opacity:1}}
+
+  /* ========= Debug minimal Toggle ========= */
+  .debug{margin-top:14px;color:var(--muted);font-size:.9rem}
+  .debug small{opacity:.8}
 </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="glow"></div>
+    <div class="brand-row">
+      <div class="logo">
+        <!-- Ersetze durch dein Logo -->
+        <img src="/crunchclub/assets/img/logo.png" alt="CrunchClub Logo" onerror="this.style.display='none'">
+      </div>
+      <div>
+        <h1 class="title">CrunchClub – Registrierung</h1>
+        <p class="subtitle">Ramen • Burritos • Tacos • Fries – Zwickau</p>
+      </div>
+    </div>
+
+    <!-- STATUS CARD -->
+    <div class="card">
+      <span id="badge" class="statusBadge warn">
+        <span class="check" id="chk" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"/></svg></span>
+        <span id="badgeText">Status wird geprüft …</span>
+      </span>
+
+      <div class="row" style="margin-top:14px">
+        <div>
+          <div class="kv">
+            <div class="k">Status</div><div id="kv_status">–</div>
+            <div class="k">Standort</div><div id="kv_venue">–</div>
+            <div class="k">Zeit</div><div id="kv_time">–</div>
+            <div class="k">Client-ID</div><div id="kv_cid">–</div>
+          </div>
+          <div class="hr"></div>
+          <div id="tips" style="color:var(--muted)"></div>
+
+          <div class="actions" style="margin-top:14px">
+            <button id="retry" class="btn">Erneut scannen</button>
+            <button id="reset" class="btn secondary">Client-ID zurücksetzen</button>
+            <a id="menuBtn" class="btn secondary" href="/crunchclub/#menu">Zur Speisekarte</a>
+          </div>
+        </div>
+
+        <!-- Menu Teaser -->
+        <div>
+          <h3 style="margin:0 0 8px 0">Heute beliebt</h3>
+          <div class="menu-strip">
+            <!-- Ersetze Bilder/Texte durch echte Items -->
+            <article class="tile">
+              <img src="/crunchclub/assets/img/ramen.jpg" alt="Tonkotsu Ramen">
+              <div class="price">ab 9,90 €</div>
+              <h4>Tonkotsu Ramen</h4>
+              <p>Cremige Brühe, eigene Toppings – „Deine Ramen, dein Style“.</p>
+            </article>
+            <article class="tile">
+              <img src="/crunchclub/assets/img/burrito.jpg" alt="Burrito Guacamole">
+              <div class="price">ab 7,90 €</div>
+              <h4>Burrito Guacamole</h4>
+              <p>Frisch gerollt, Bohnen, Reis, Proteine frei wählbar.</p>
+            </article>
+            <article class="tile">
+              <img src="/crunchclub/assets/img/fries.jpg" alt="Fries Guac-Style">
+              <div class="price">5,50 €</div>
+              <h4>Fries „Guac-Style“</h4>
+              <p>Knusprig + Avocado-Kick. Perfekt als Side.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infoleiste: Öffnungszeiten & Adresse -->
+    <div class="infobar">
+      <div class="panel">
+        <div class="chip">📍 Innere Schneeberger Str. 17, 08056 Zwickau</div>
+        <div class="hours" id="hours">
+          <!-- wird aus JSON unten gefüllt -->
+        </div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <strong>Folge uns</strong>
+          <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener">Instagram →</a>
+        </div>
+        <div class="hr" style="margin:10px 0"></div>
+        <div class="iggrid" id="ig">
+          <!-- statische Vorschaubilder (du ersetzt sie durch deine IG-Bilder) -->
+          <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener"><img src="/crunchclub/assets/img/ig1.jpg" alt=""></a>
+          <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener"><img src="/crunchclub/assets/img/ig2.jpg" alt=""></a>
+          <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener"><img src="/crunchclub/assets/img/ig3.jpg" alt=""></a>
+          <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener"><img src="/crunchclub/assets/img/ig4.jpg" alt=""></a>
+          <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener"><img src="/crunchclub/assets/img/ig5.jpg" alt=""></a>
+          <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener"><img src="/crunchclub/assets/img/ig6.jpg" alt=""></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="debug"><small>Es werden nur anonyme technische Daten verarbeitet (Zeit, Token, anonyme Client-ID). Kein tracking über Websites hinweg.</small></div>
+  </section>
+</div>
+
+<script>
+(function(){
+  // ===== Basic helpers
+  const qs = new URLSearchParams(location.search);
+  const ven = qs.get('ven') || 'CrunchClub Zwickau';
+  const registered = qs.get('registered'); // "1" | "0" | null
+  const reason = (qs.get('reason')||'').toLowerCase();
+
+  function set(id, html){ document.getElementById(id).innerHTML = html; }
+  function badge(cls, text){ const b=document.getElementById('badge'); b.className='statusBadge '+cls; set('badgeText', text); }
+  function cidGet(){ try{ let id=localStorage.getItem('cc_client_id'); if(!id){ id=crypto.randomUUID(); localStorage.setItem('cc_client_id', id);} return id; }catch(e){ return '(kein Storage)'; } }
+  function advice(html){ document.getElementById('tips').innerHTML = html; }
+  function nowStr(){ return new Date().toLocaleString(); }
+
+  // ===== Öffnungszeiten (ersetzen mit echten Zeiten)
+  const HOURS = [
+    {d:'Montag',    h:'11:00 – 21:00'},
+    {d:'Dienstag',  h:'11:00 – 21:00'},
+    {d:'Mittwoch',  h:'11:00 – 21:00'},
+    {d:'Donnerstag',h:'11:00 – 21:00'},
+    {d:'Freitag',   h:'11:00 – 21:30'},
+    {d:'Samstag',   h:'11:00 – 21:30'},
+    {d:'Sonntag',   h:'geschlossen'}
+  ];
+  const today = new Date().getDay(); // So=0..Sa=6
+  const mapIdx = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
+  const openHTML = HOURS.map((r,i)=>{
+    const isToday = i === mapIdx[today];
+    return `<div class="k">${r.d}${isToday? ' <span class="chip open">heute</span>':''}</div><div>${r.h}</div>`;
+  }).join('');
+  set('hours', openHTML);
+
+  // ===== Sichtbare Felder
+  set('kv_time', nowStr());
+  set('kv_venue', ven);
+  set('kv_cid', cidGet());
+
+  // ===== Zustände & Texte
+  const STATES = {
+    success: {
+      kv: 'Erfolgreich',
+      badge: ['ok','✓ Registrierung erfolgreich'],
+      tip: `<ul style="margin:0 0 0 18px;padding:0">
+              <li>Bestätigung bei Bedarf am Tresen zeigen.</li>
+              <li>Für Loyalty-Punkte einfach bei jedem Besuch scannen.</li>
+            </ul>`
+    },
+    dupe: {
+      kv: 'Nicht gespeichert (dupe)',
+      badge: ['err','⚠️ Heute bereits registriert'],
+      tip: `<b>Hinweis</b> pro Gerät & Token nur <b>1× pro Tag</b>.<br>Später erneut scannen.`
+    },
+    rate: {
+      kv: 'Nicht gespeichert (rate)',
+      badge: ['err','⚠️ Zu viele Scans'],
+      tip: `Bitte 1–2 Minuten warten und erneut scannen.`
+    },
+    invalid: {
+      kv: 'Nicht gespeichert (invalid)',
+      badge: ['err','⚠️ Ungültiger QR'],
+      tip: `Veraltet oder Parameter fehlen. Bitte aktuellen QR am Tresen scannen.`
+    },
+    expired: {
+      kv: 'Nicht gespeichert (expired)',
+      badge: ['err','⚠️ QR abgelaufen'],
+      tip: `Bitte aktuellen QR verwenden (Poster am Tresen).`
+    },
+    inactive: {
+      kv: 'Nicht gespeichert (inactive)',
+      badge: ['err','⚠️ QR deaktiviert'],
+      tip: `Bitte neuen QR am Tresen anfordern.`
+    },
+    venue: {
+      kv: 'Nicht gespeichert (venue)',
+      badge: ['err','⚠️ Standort stimmt nicht'],
+      tip: `Dieser QR gilt nicht für diesen Standort.`
+    },
+    param: {
+      kv: 'Nicht gespeichert (param)',
+      badge: ['err','⚠️ Parameter fehlen'],
+      tip: `Bitte QR erneut scannen.`
+    },
+    server: {
+      kv: 'Nicht gespeichert (server)',
+      badge: ['err','⚠️ Vorübergehender Fehler'],
+      tip: `Bitte in wenigen Minuten erneut versuchen.`
+    },
+    unknown: {
+      kv: 'Unbekannt',
+      badge: ['warn','ℹ️ Unklarer Status'],
+      tip: `Diese Seite wurde ohne gültigen Status aufgerufen. Bitte QR erneut scannen.`
+    }
+  };
+
+  // Status ableiten
+  let view;
+  if (registered === '1') view = STATES.success;
+  else if (registered === '0') view = STATES[reason] || STATES.unknown;
+  else view = STATES.unknown;
+
+  // UI setzen
+  set('kv_status', view.kv);
+  badge(view.badge[0], view.badge[1]);
+  advice(view.tip);
+  if (registered === '1') document.getElementById('chk').style.display = 'grid';
+
+  // Aktionen
+  document.getElementById('retry').onclick = ()=> {
+    if (document.referrer && /script\.google\.com/.test(document.referrer)) location.reload();
+    else history.length>1 ? history.back() : window.location.href = '/crunchclub/';
+  };
+  document.getElementById('reset').onclick = ()=> {
+    try{ localStorage.removeItem('cc_client_id'); alert('Client-ID zurückgesetzt. Bitte erneut scannen.'); location.reload(); }catch(e){}
+  };
+})();
+</script>
+</body>
+</html></style>
 </head>
 <body>
 <div class="wrap">
