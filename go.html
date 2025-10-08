@@ -4,31 +4,41 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CrunchClub · Weiterleitung…</title>
 <style>
-  :root{
-    --fg:#e6eaf0; --accent:#f59e0b;
-  }
-  html,body{height:100%;margin:0;background:#0b0f1a;color:var(--fg);font:16px system-ui,sans-serif}
-  .pre{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;backdrop-filter:blur(2px);background:#0b0f1a}
-  .card{background:#101726cc;border:1px solid #1f2937;border-radius:16px;padding:22px;box-shadow:0 10px 32px rgba(0,0,0,.4);min-width:280px}
+  :root{--fg:#e6eaf0; --muted:#9ca3af; --accent:#f59e0b; --bg:#0b0f1a; --card:#101726; --stroke:#1f2937}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font:16px system-ui,sans-serif}
+
+  /* PRELOADER: solide, sofort sichtbar, keine teuren Effekte */
+  .pre{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:var(--bg);opacity:1}
+  .pre.hide{animation:fade .45s ease forwards}
+  @keyframes fade{to{opacity:0;visibility:hidden}}
+
+  .card{background:var(--card);border:1px solid var(--stroke);border-radius:16px;padding:22px;min-width:280px;
+        box-shadow:0 8px 24px rgba(0,0,0,.35)}
   .top{display:flex;gap:14px;align-items:center}
   .title{font-weight:700}
-  .muted{color:#9ca3af}
-  .icon{width:64px;height:64px;display:grid;place-items:center}
-  .ramen-steam path{stroke:var(--accent);stroke-width:2;fill:none;stroke-linecap:round;stroke-dasharray:40 120;animation:steam 2.2s ease-in-out infinite}
+  .muted{color:var(--muted)}
+  .icon{width:56px;height:56px;display:grid;place-items:center}
+
+  /* Ramen-Dampf + fallback Spinner für super-frühen Paint */
+  .ramen-steam path{stroke:var(--accent);stroke-width:2;fill:none;stroke-linecap:round;
+                    stroke-dasharray:40 120;animation:steam 2s ease-in-out infinite}
   .ramen-steam path:nth-child(2){animation-delay:.25s}
   .ramen-steam path:nth-child(3){animation-delay:.5s}
   @keyframes steam{0%{stroke-dashoffset:0;opacity:.2}50%{opacity:1}100%{stroke-dashoffset:-160;opacity:.2}}
   .ramen-bowl{fill:none;stroke:#3b4a5e;stroke-width:2}
-  .pre.hide{animation:fade .6s ease forwards}
-  @keyframes fade{to{opacity:0;visibility:hidden}}
+
+  /* Minimaler CSS-Spinner (falls SVG anim noch nicht läuft) */
+  .spin{width:18px;height:18px;border:3px solid #243142;border-top-color:var(--accent);
+        border-radius:50%;animation:rot 1s linear infinite;margin-left:auto}
+  @keyframes rot{to{transform:rotate(360deg)}}
 </style>
 <body>
-  <!-- Loader -->
-  <div class="pre" id="pre">
+  <!-- SOFORT sichtbarer Loader -->
+  <div class="pre" id="pre" style="display:grid">
     <div class="card">
       <div class="top">
-        <div class="icon">
-          <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+        <div class="icon" aria-hidden="true">
+          <svg width="56" height="56" viewBox="0 0 64 64">
             <g class="ramen-steam">
               <path d="M18 22 C22 18, 28 18, 32 22"/>
               <path d="M26 18 C30 14, 36 14, 40 18"/>
@@ -41,13 +51,14 @@
           <div class="title">Küche heizt an…</div>
           <div class="muted">Ramen wird vorbereitet</div>
         </div>
+        <div class="spin" aria-hidden="true"></div>
       </div>
     </div>
   </div>
 
 <script>
 (function(){
-  // Ziel-URL vorbereiten
+  // Ziel-URL (wie gehabt)
   const Q = new URLSearchParams(location.search);
   const VENUE = Q.get('venue_id') || 'crunchclub-zwickau';
   const TOKEN = Q.get('token') || '';
@@ -55,30 +66,44 @@
 
   function getCID(){
     try{
-      let id=localStorage.getItem('cc_client_id');
-      if(!id){id=crypto.randomUUID();localStorage.setItem('cc_client_id',id);}
+      let id = localStorage.getItem('cc_client_id');
+      if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
       return id;
-    }catch(e){return '';}
+    }catch(e){ return ''; }
   }
 
-  const cid=encodeURIComponent(getCID());
-  const ua=encodeURIComponent(navigator.userAgent||'');
+  const cid = encodeURIComponent(getCID());
+  const ua  = encodeURIComponent(navigator.userAgent || '');
 
-  // Sobald die Seite komplett geladen ist
-  window.addEventListener('load',()=>{
-    // Loader ausblenden
-    document.getElementById('pre').classList.add('hide');
+  // 1) Sofort sicherstellen, dass der Loader gepainted wird (Safari-iOS Workaround)
+  //    Kleine Verzögerung bis nach DOMContentLoaded -> garantiert erste Darstellung.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){
+      requestAnimationFrame(()=>{ /* NOP – erzwingt ersten Paint */ });
+    });
+  }
 
-    // und nach kurzer Fade-Zeit weiterleiten
-    setTimeout(()=>{
-      if(!TOKEN){
-        alert('Fehlender Token – bitte QR erneut scannen.');
-        return;
-      }
-      const url=`${APP}?venue_id=${encodeURIComponent(VENUE)}&token=${encodeURIComponent(TOKEN)}&client_id=${cid}&ua=${ua}`;
+  // 2) Erst nach *vollständigem* Laden (inkl. Bilder/Fonts) ausblenden und weiter
+  window.addEventListener('load', function(){
+    const pre = document.getElementById('pre');
+
+    // Ohne Token nicht weiterleiten (aber Loader ausblenden + Hinweis)
+    if(!TOKEN){
+      pre.querySelector('.title').textContent = 'Fehlender Token';
+      pre.querySelector('.muted').textContent = 'Bitte QR erneut scannen.';
+      // Spinner entfernen, Loader stehen lassen (oder optional ausblenden)
+      pre.querySelector('.spin')?.remove();
+      return;
+    }
+
+    // Sanft ausblenden und NACH der Animation weiterleiten
+    pre.classList.add('hide');
+    setTimeout(function(){
+      const url = `${APP}?venue_id=${encodeURIComponent(VENUE)}&token=${encodeURIComponent(TOKEN)}&client_id=${cid}&ua=${ua}`;
+      // replace, damit die Loader-Seite nicht im Verlauf bleibt
       location.replace(url);
-    },600);
-  });
+    }, 460); // <= passend zur CSS-Animation .45s
+  }, { once:true });
 })();
 </script>
 </body>
