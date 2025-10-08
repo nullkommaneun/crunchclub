@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="de" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrunchClub – Registrierung</title>
+  <meta name="color-scheme" content="light dark">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0b0f1a}
+    .glow-effect{position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;background:
+      radial-gradient(40% 60% at 10% 10%, rgba(6,182,212,.25), transparent 60%),
+      radial-gradient(50% 70% at 90% 20%, rgba(168,85,247,.25), transparent 70%);
+      filter:blur(30px);opacity:.7;z-index:-1}
+    .menu-strip::-webkit-scrollbar{height:6px}
+    .menu-strip::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:10px}
+    .menu-strip::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:10px}
+  </style>
+</head>
+<body class="text-gray-200 antialiased">
+<div class="max-w-4xl mx-auto p-4 md:p-6 lg:p-8">
+
+  <!-- Hero -->
+  <header class="relative rounded-2xl p-5 border border-white/10 overflow-hidden" style="background:linear-gradient(135deg, rgba(168,85,247,.06), rgba(6,182,212,.06));">
+    <div class="glow-effect"></div>
+    <div class="flex items-center gap-4">
+      <div class="flex-shrink-0 w-14 h-14 rounded-xl border border-white/20 bg-slate-800/50 overflow-hidden grid place-items-center">
+        <img src="https://placehold.co/100x100/0b0f1a/67e8f9?text=CC" alt="CrunchClub Logo" class="w-full h-full object-cover">
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white">CrunchClub Registrierung</h1>
+        <p class="text-gray-400">Ramen • Burritos • Tacos • Fries – Zwickau</p>
+      </div>
+    </div>
+
+    <!-- Status Card -->
+    <div class="mt-5 bg-black/20 border border-white/10 rounded-2xl p-5 shadow-2xl backdrop-blur-lg">
+      <div id="badge" class="inline-flex items-center gap-3 py-2 px-4 rounded-full border font-bold transition-all duration-300">
+        <div id="badgeIcon" class="w-5 h-5"></div>
+        <span id="badgeText">Status wird geprüft …</span>
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
+        <!-- Left -->
+        <div>
+          <div class="grid grid-cols-[110px_1fr] gap-x-4 gap-y-2 text-sm">
+            <div class="text-gray-400">Status</div><div id="kv_status" class="font-semibold">–</div>
+            <div class="text-gray-400">Standort</div><div id="kv_venue" class="font-semibold">–</div>
+            <div class="text-gray-400">Zeit</div><div id="kv_time" class="font-semibold">–</div>
+            <div class="text-gray-400">Client-ID</div><div id="kv_cid" class="font-mono text-xs truncate">–</div>
+            <div class="text-gray-400">Code</div><div id="kv_token" class="font-mono text-xs truncate">–</div>
+          </div>
+
+          <hr class="border-white/10 my-4">
+
+          <!-- Klartext für Kunden -->
+          <div id="headline" class="text-xl font-bold text-white mb-2"></div>
+          <div id="explain" class="text-gray-200/90"></div>
+
+          <div class="mt-5 flex flex-wrap gap-3">
+            <button id="retry" class="px-4 py-2 rounded-lg font-bold text-slate-900 bg-gradient-to-r from-cyan-400 to-purple-500 hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/20">
+              Erneut scannen
+            </button>
+            <button id="reset" class="px-4 py-2 rounded-lg font-bold bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+              Client-ID zurücksetzen
+            </button>
+            <a id="menuBtn" href="#menu" class="px-4 py-2 rounded-lg font-bold bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+              Zur Speisekarte
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Menu Teaser -->
+        <div>
+          <h3 class="font-bold text-white mb-3">Heute beliebt</h3>
+          <div class="menu-strip flex gap-3 overflow-x-auto pb-2 -mb-2 snap-x snap-mandatory">
+            <article class="flex-shrink-0 w-56 snap-start bg-slate-800/60 rounded-xl border border-white/10 overflow-hidden">
+              <img src="https://placehold.co/400x300/1a202c/ffffff?text=Ramen" alt="Tonkotsu Ramen" class="w-full h-28 object-cover">
+              <div class="p-3">
+                <h4 class="font-bold text-white">Tonkotsu Ramen</h4>
+                <p class="text-xs text-gray-400 mt-1">Cremige Brühe, Toppings nach Wahl.</p>
+              </div>
+            </article>
+            <article class="flex-shrink-0 w-56 snap-start bg-slate-800/60 rounded-xl border border-white/10 overflow-hidden">
+              <img src="https://placehold.co/400x300/1a202c/ffffff?text=Burrito" alt="Burrito" class="w-full h-28 object-cover">
+              <div class="p-3">
+                <h4 class="font-bold text-white">Burrito Guacamole</h4>
+                <p class="text-xs text-gray-400 mt-1">Frisch gerollt, Proteine frei wählbar.</p>
+              </div>
+            </article>
+            <article class="flex-shrink-0 w-56 snap-start bg-slate-800/60 rounded-xl border border-white/10 overflow-hidden">
+              <img src="https://placehold.co/400x300/1a202c/ffffff?text=Fries" alt="Fries" class="w-full h-28 object-cover">
+              <div class="p-3">
+                <h4 class="font-bold text-white">Fries „Guac-Style“</h4>
+                <p class="text-xs text-gray-400 mt-1">Knusprig + Avocado-Kick.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Öffnungszeiten / Instagram -->
+  <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 p-5 bg-slate-800/40 border border-white/10 rounded-2xl">
+      <div class="inline-block py-1 px-3 text-xs rounded-full bg-white/5 border border-white/10 mb-3">
+        📍 Innere Schneeberger Str. 17, 08056 Zwickau
+      </div>
+      <div id="hours" class="grid grid-cols-[110px_1fr] md:grid-cols-[130px_1fr] gap-x-4 gap-y-1.5 text-sm"></div>
+    </div>
+    <div class="p-5 bg-slate-800/40 border border-white/10 rounded-2xl">
+      <div class="flex justify-between items-center">
+        <strong class="font-bold text-white">Folge uns</strong>
+        <a href="https://instagram.com/crunchclub_zwickau" target="_blank" rel="noopener" class="text-sm text-cyan-400 hover:underline">Instagram →</a>
+      </div>
+      <hr class="border-white/10 my-3">
+      <div class="grid grid-cols-3 gap-2">
+        <a href="#" class="aspect-square rounded-lg overflow-hidden bg-slate-700"><img src="https://placehold.co/200x200/1a202c/ffffff?text=Post" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" alt=""></a>
+        <a href="#" class="aspect-square rounded-lg overflow-hidden bg-slate-700"><img src="https://placehold.co/200x200/1a202c/ffffff?text=Food" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" alt=""></a>
+        <a href="#" class="aspect-square rounded-lg overflow-hidden bg-slate-700"><img src="https://placehold.co/200x200/1a202c/ffffff?text=Love" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" alt=""></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="mt-6 text-center text-xs text-gray-500">
+    <p>Es werden nur anonyme technische Daten verarbeitet (Zeit, Token, anonyme Client-ID). Kein Tracking über Websites hinweg.</p>
+  </footer>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-5 right-5 translate-x-[200%] transition-transform duration-500 bg-gray-800 border border-gray-700 text-white px-6 py-3 rounded-lg shadow-lg">
+  <p id="toastMessage"></p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const qs = new URLSearchParams(location.search);
+  const dom = {
+    badge: document.getElementById('badge'),
+    badgeIcon: document.getElementById('badgeIcon'),
+    badgeText: document.getElementById('badgeText'),
+    kv_status: document.getElementById('kv_status'),
+    kv_venue: document.getElementById('kv_venue'),
+    kv_time: document.getElementById('kv_time'),
+    kv_cid: document.getElementById('kv_cid'),
+    kv_token: document.getElementById('kv_token'),
+    headline: document.getElementById('headline'),
+    explain: document.getElementById('explain'),
+    hours: document.getElementById('hours'),
+    retry: document.getElementById('retry'),
+    reset: document.getElementById('reset'),
+    toast: document.getElementById('toast'),
+    toastMessage: document.getElementById('toastMessage')
+  };
+
+  const ICONS = {
+    success: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"/></svg>`,
+    warning: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`,
+    error: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`
+  };
+
+  function setBadge(type, text, icon){
+    const map = {
+      ok: 'bg-green-500/10 border-green-500 text-green-400',
+      warn: 'bg-amber-500/10 border-amber-500 text-amber-400',
+      err: 'bg-red-500/10 border-red-500 text-red-400'
+    };
+    dom.badge.className = `inline-flex items-center gap-3 py-2 px-4 rounded-full border font-bold ${map[type]||map.warn}`;
+    dom.badgeIcon.innerHTML = icon || '';
+    dom.badgeText.textContent = text;
+  }
+  function toast(msg){
+    dom.toastMessage.textContent = msg;
+    dom.toast.classList.remove('translate-x-[200%]');
+    setTimeout(()=>dom.toast.classList.add('translate-x-[200%]'), 2500);
+  }
+  function getCID(){
+    try{
+      let id = localStorage.getItem('cc_client_id');
+      if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
+      return id;
+    }catch{ return '(kein Storage)'; }
+  }
+  function resetCID(){
+    try{ localStorage.removeItem('cc_client_id'); toast('Client-ID zurückgesetzt.'); setTimeout(()=>location.reload(), 800); }catch{}
+  }
+  function todayKey(){ const d=new Date(); return d.toISOString().slice(0,10); } // YYYY-MM-DD
+
+  // Öffnungszeiten
+  const HOURS = [
+    { d:'Montag', h:'11:00 – 21:00' },
+    { d:'Dienstag', h:'11:00 – 21:00' },
+    { d:'Mittwoch', h:'11:00 – 21:00' },
+    { d:'Donnerstag', h:'11:00 – 21:00' },
+    { d:'Freitag', h:'11:00 – 21:30' },
+    { d:'Samstag', h:'11:00 – 21:30' },
+    { d:'Sonntag', h:'geschlossen' }
+  ];
+  const dayMap=[6,0,1,2,3,4,5]; // So=0..Sa=6 → index in HOURS
+  const htmlHours = HOURS.map((row,i)=>{
+    const isToday = i === dayMap[new Date().getDay()];
+    return `<div class="${isToday?'text-cyan-400 font-bold':'text-gray-400'}">${row.d}</div><div class="${isToday?'text-white font-bold':''}">${row.h}</div>`;
+  }).join('');
+  dom.hours.innerHTML = htmlHours;
+
+  // Sichtbare Basisfelder
+  dom.kv_time.textContent = new Date().toLocaleString('de-DE');
+  dom.kv_venue.textContent = qs.get('ven') || 'CrunchClub Zwickau';
+  dom.kv_cid.textContent   = getCID();
+  const token = qs.get('tk') || '—';
+  dom.kv_token.textContent = token;
+
+  // State aus Query
+  const registered = qs.get('registered');      // "1" | "0" | null
+  const reason = (qs.get('reason')||'').toLowerCase();
+
+  // Lokale Tageshistorie: merken, welcher Token heute erfolgreich war
+  const HKEY = 'cc_success_today';
+  const dateKey = todayKey();
+  let successMap = {};
+  try { successMap = JSON.parse(localStorage.getItem(HKEY) || '{}'); } catch {}
+  const alreadySuccessToday = (token && successMap[dateKey] && successMap[dateKey][token]) ? true : false;
+
+  // Texte/Empfehlungen
+  function setSuccessFirstTime(){
+    setBadge('ok', '✓ Registrierung erfolgreich', ICONS.success);
+    dom.kv_status.textContent = 'Erfolgreich';
+    dom.headline.textContent = 'Eingetragen – willkommen beim CrunchClub!';
+    dom.explain.innerHTML = `
+      <p>Du hast dich <b>heute zum ersten Mal</b> registriert.</p>
+      <p class="mt-2">Zeige diese Bestätigung bei Bedarf am Tresen. Für Punkte einfach bei jedem Besuch scannen.</p>`;
+    // Erfolg mitschreiben
+    try {
+      successMap[dateKey] = successMap[dateKey] || {};
+      if (token && token !== '—') successMap[dateKey][token] = true;
+      localStorage.setItem(HKEY, JSON.stringify(successMap));
+    } catch {}
+  }
+  function setDupe(){
+    setBadge('err', '⚠️ Heute bereits registriert', ICONS.error);
+    dom.kv_status.textContent = 'Bereits registriert';
+    dom.headline.textContent = 'Heute schon eingetragen';
+    dom.explain.innerHTML = `
+      <p>Du hast diesen Code${token && token!=='—' ? ` <span class="font-mono text-xs bg-white/5 border border-white/10 px-1.5 py-0.5 rounded">${token}</span>` : ''} heute bereits verwendet.</p>
+      <p class="mt-2">Morgen kannst du wieder scannen. Bei Fragen: bitte am Tresen melden.</p>`;
+  }
+  function setRate(){
+    setBadge('err', '⚠️ Zu viele Scans', ICONS.error);
+    dom.kv_status.textContent = 'Zu viele Scans';
+    dom.headline.textContent = 'Kurz warten und erneut scannen';
+    dom.explain.innerHTML = `<p>Bitte 1–2 Minuten warten und dann erneut versuchen.</p>`;
+  }
+  function setInvalid(msg){
+    setBadge('err', '⚠️ QR ungültig/abgelaufen', ICONS.error);
+    dom.kv_status.textContent = 'Ungültig';
+    dom.headline.textContent = 'Dieser QR-Code ist nicht gültig';
+    dom.explain.innerHTML = `
+      <p>${msg||'Der QR ist veraltet oder die Parameter fehlen.'}</p>
+      <p class="mt-2">Bitte den <b>aktuellen</b> QR am Tresen scannen.</p>`;
+  }
+  function setVenue(){
+    setBadge('err', '⚠️ Standort stimmt nicht', ICONS.error);
+    dom.kv_status.textContent = 'Falscher Standort';
+    dom.headline.textContent = 'Dieser QR gilt hier nicht';
+    dom.explain.innerHTML = `<p>Bitte den QR für diesen Standort verwenden.</p>`;
+  }
+  function setServer(){
+    setBadge('err', '⚠️ Vorübergehender Fehler', ICONS.error);
+    dom.kv_status.textContent = 'Server-Fehler';
+    dom.headline.textContent = 'Da ist etwas schiefgelaufen';
+    dom.explain.innerHTML = `<p>Bitte in wenigen Minuten erneut versuchen.</p>`;
+  }
+  function setUnknown(){
+    setBadge('warn', 'ℹ️ Unklarer Status', ICONS.warning);
+    dom.kv_status.textContent = 'Unbekannt';
+    dom.headline.textContent = 'Bitte QR erneut scannen';
+    dom.explain.innerHTML = `<p>Diese Seite wurde ohne klaren Status geöffnet.</p>`;
+  }
+
+  // Entscheidungslogik (kundenklar)
+  if (registered === '1') {
+    // Erfolg → „Erstmalig heute“
+    setSuccessFirstTime();
+    if (alreadySuccessToday) {
+      // Edge Case: Browser hatte früher Erfolg (z. B. zweites Gerät) – Hinweis schärfen
+      dom.explain.innerHTML += `<p class="mt-2 text-sm text-gray-400">Hinweis: Dieser Browser hat heute bereits eine erfolgreiche Registrierung gespeichert.</p>`;
+    }
+  } else if (registered === '0') {
+    switch (reason) {
+      case 'dupe':   setDupe(); break;
+      case 'rate':   setRate(); break;
+      case 'expired':
+      case 'inactive':
+      case 'invalid': setInvalid(); break;
+      case 'venue':  setVenue(); break;
+      case 'param':  setInvalid('Parameter fehlen oder Link fehlerhaft.'); break;
+      case 'server': setServer(); break;
+      default:       setUnknown(); break;
+    }
+  } else {
+    setUnknown();
+  }
+
+  // Basisangaben
+  dom.kv_venue.textContent = qs.get('ven') || 'CrunchClub Zwickau';
+  dom.kv_time.textContent  = new Date().toLocaleString('de-DE');
+
+  // Aktionen
+  dom.retry.onclick = () => {
+    if (document.referrer && /script\.google\.com/.test(document.referrer)) location.reload();
+    else history.length > 1 ? history.back() : (window.location.href = '/');
+  };
+  dom.reset.onclick = () => resetCID();
+});
+</script>
+</body>
+</html>
