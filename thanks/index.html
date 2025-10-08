@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>CrunchClub – Danke</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <style>
+    :root {
+      --ok: #16a34a;
+      --warn: #f59e0b;
+      --err: #dc2626;
+      --fg: #0f172a;
+      --muted: #64748b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    .wrap { max-width: 880px; margin: 40px auto; padding: 0 16px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+    h1 { font-size: 1.75rem; margin: 0 0 10px; }
+    p.lead { font-size: 1.05rem; color: var(--muted); margin-top: 0; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 999px; font-weight: 600; font-size: .95rem; border: 1px solid var(--border); }
+    .badge.ok { background: #ecfdf5; color: var(--ok); border-color: #bbf7d0; }
+    .badge.err { background: #fef2f2; color: var(--err); border-color: #fecaca; }
+    .kv { display:grid; grid-template-columns: 160px 1fr; gap: 8px 16px; margin-top: 16px; }
+    .kv div { padding: 6px 0; }
+    .kv .k { color: var(--muted); }
+    .hr { height:1px; background: var(--border); margin: 20px 0; }
+
+    /* Debug panel */
+    details.debug { margin-top: 20px; }
+    details.debug > summary { cursor: pointer; font-weight: 600; }
+    .debug-grid { display:grid; grid-template-columns: 220px 1fr; gap: 6px 14px; margin-top: 12px; }
+    .mono { font-family: var(--mono); font-size: 0.9rem; }
+    pre.code { background:#0b1020; color:#e5e7eb; border-radius:10px; padding:12px; overflow:auto; }
+    .btns { display:flex; gap:8px; flex-wrap: wrap; margin: 12px 0; }
+    button { background:#111827; color:#fff; border:0; border-radius:8px; padding:8px 12px; cursor:pointer; }
+    button.secondary { background:#334155; }
+    .note { font-size:.9rem; color:var(--muted); }
+    .alert { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; padding:10px 12px; border-radius:8px; margin-top:12px; }
+    a { color:#0ea5e9; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="statusCard">
+      <div id="statusBadge" class="badge">Lade …</div>
+      <h1 id="title">CrunchClub – Vielen Dank!</h1>
+      <p class="lead" id="lead">Dein Scan wurde verarbeitet.</p>
+
+      <div class="kv" id="kv">
+        <div class="k">Status</div><div id="kv_status">–</div>
+        <div class="k">Ort</div><div id="kv_venue">–</div>
+        <div class="k">Zeit</div><div id="kv_time">–</div>
+        <div class="k">Client-ID</div><div id="kv_cid">–</div>
+      </div>
+
+      <div class="hr"></div>
+
+      <details class="debug" open>
+        <summary>Entwickler/Debug-Panel (später entfernen)</summary>
+        <div class="alert">Hinweis: Diese Informationen sind nur für Entwicklung/Debugging vorgesehen. Vor Live-Betrieb entfernen.</div>
+
+        <div class="btns">
+          <button id="copyJson">Debug-JSON kopieren</button>
+          <button id="resetCid" class="secondary">Client-ID zurücksetzen</button>
+          <button id="reload" class="secondary">Seite neu laden</button>
+        </div>
+
+        <h3>Query-Parameter</h3>
+        <pre class="code mono" id="qp"></pre>
+
+        <h3>Geräte-/Browserinfos</h3>
+        <div class="debug-grid mono" id="dbgGrid">
+          <!-- dynamisch gefüllt -->
+        </div>
+
+        <h3>Lokaler Zustand</h3>
+        <pre class="code mono" id="localState"></pre>
+      </details>
+
+      <p class="note">Datenschutzhinweis (Entwicklungsphase): Diese Seite speichert eine anonyme Client-ID im Browser-Speicher, um wiederkehrende Besuche technisch zu erkennen. Keine personenbezogenen Daten, kein Tracking über Webseiten hinweg.</p>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const qs = new URLSearchParams(location.search);
+
+      // 1) Client-ID verwalten (anonym)
+      function getClientId(){
+        try {
+          let cid = localStorage.getItem('cc_client_id');
+          if(!cid){
+            cid = crypto.randomUUID();
+            localStorage.setItem('cc_client_id', cid);
+          }
+          return cid;
+        } catch(e){
+          return '(localStorage nicht verfügbar)';
+        }
+      }
+      function resetClientId(){
+        try {
+          localStorage.removeItem('cc_client_id');
+        } catch(e){}
+      }
+
+      const clientId = getClientId();
+
+      // 2) Status aus Query-Parametern
+      const registered = qs.get('registered'); // "1" | "0" | null
+      const reason = qs.get('reason'); // optional: rate | dupe | …
+      const venue = qs.get('ven') || 'unbekannt';
+
+      // 3) UI setzen
+      const statusBadge = document.getElementById('statusBadge');
+      const kv_status = document.getElementById('kv_status');
+      const kv_venue = document.getElementById('kv_venue');
+      const kv_time  = document.getElementById('kv_time');
+      const kv_cid   = document.getElementById('kv_cid');
+      const title    = document.getElementById('title');
+      const lead     = document.getElementById('lead');
+
+      const now = new Date();
+      kv_time.textContent = now.toLocaleString();
+
+      kv_venue.textContent = venue;
+      kv_cid.textContent = clientId;
+
+      let statusText = 'Unbekannt';
+      if (registered === '1') {
+        statusBadge.classList.add('ok');
+        statusBadge.textContent = '✓ Registrierung erfolgreich';
+        statusText = 'Erfolgreich';
+        title.textContent = 'CrunchClub – Danke für deinen Besuch!';
+        lead.textContent = 'Dein Scan wurde registriert. Viel Spaß beim Essen!';
+      } else if (registered === '0') {
+        statusBadge.classList.add('err');
+        statusBadge.textContent = '⚠️ Registrierung nicht gespeichert';
+        statusText = 'Nicht gespeichert' + (reason ? ` (${reason})` : '');
+        title.textContent = 'CrunchClub – Hinweis';
+        lead.textContent = reason === 'rate'
+          ? 'Zu viele Scans in kurzer Zeit. Bitte später erneut versuchen.'
+          : reason === 'dupe'
+            ? 'Heute bereits registriert.'
+            : 'Scan konnte nicht gespeichert werden.';
+      } else {
+        statusBadge.classList.add('warn');
+        statusBadge.textContent = 'ℹ️ Ohne Statusparameter';
+        statusText = 'Unbekannt';
+        lead.textContent = 'Diese Seite wurde direkt aufgerufen.';
+      }
+      kv_status.textContent = statusText;
+
+      // 4) Debug: Query-Parameter anzeigen
+      const qp = {};
+      for (const [k,v] of qs.entries()) qp[k]=v;
+      document.getElementById('qp').textContent = JSON.stringify(qp, null, 2);
+
+      // 5) Debug: Geräteinfos sammeln (defensiv)
+      function safe(getter, fallback='—'){ try { const v = getter(); return (v===undefined||v===null||v==='') ? fallback : v; } catch(e){ return fallback; } }
+      const dbg = {
+        userAgent: safe(()=> navigator.userAgent),
+        platform: safe(()=> navigator.platform),
+        language: safe(()=> navigator.language),
+        languages: safe(()=> navigator.languages?.join(', ')),
+        vendor: safe(()=> navigator.vendor),
+        onLine: safe(()=> navigator.onLine),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '—',
+        tzOffsetMin: (new Date()).getTimezoneOffset(),
+        screen: safe(()=> `${screen.width}x${screen.height} @${window.devicePixelRatio||1}`),
+        viewport: `${window.innerWidth}x${window.innerHeight}`,
+        cookiesEnabled: safe(()=> navigator.cookieEnabled),
+        storageEstimate: '…',
+        connection: safe(()=> {
+          const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          if(!c) return 'n/a';
+          return `type=${c.effectiveType||'?'}, downlink=${c.downlink||'?'}Mb/s, rtt=${c.rtt||'?'}ms, saveData=${c.saveData||false}`;
+        }),
+        serviceWorker: 'serviceWorker' in navigator,
+        permissions: '…',
+        mediaDevices: '…',
+        referrer: document.referrer || '—',
+        visibility: document.visibilityState
+      };
+
+      // Storage estimate (optional)
+      if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(est => {
+          dbg.storageEstimate = `${Math.round((est.usage||0)/1024)}KB / ${Math.round((est.quota||0)/1024/1024)}MB`;
+          renderDbg();
+        });
+      }
+
+      // Permissions (best effort)
+      async function getPermissions(){
+        if (!navigator.permissions || !navigator.permissions.query) return 'n/a';
+        const types = ['camera','microphone','geolocation','notifications','persistent-storage','background-sync','clipboard-read','clipboard-write'];
+        const out = {};
+        for (const t of types) {
+          try { const s = await navigator.permissions.query({name:t}); out[t] = s.state; }
+          catch(e){ out[t] = 'unsupported'; }
+        }
+        return out;
+      }
+
+      // Media devices (best effort)
+      async function getMediaDevices(){
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return 'n/a';
+        const list = await navigator.mediaDevices.enumerateDevices();
+        const cams = list.filter(d => d.kind === 'videoinput').length;
+        const mics = list.filter(d => d.kind === 'audioinput').length;
+        return { cameras:cams, microphones:mics, total:list.length };
+      }
+
+      function renderDbg(){
+        const grid = document.getElementById('dbgGrid');
+        grid.innerHTML = '';
+        for (const [k,v] of Object.entries(dbg)) {
+          const kEl = document.createElement('div'); kEl.textContent = k; kEl.style.color = '#64748b';
+          const vEl = document.createElement('div'); vEl.textContent = (typeof v === 'object') ? JSON.stringify(v) : String(v);
+          grid.appendChild(kEl); grid.appendChild(vEl);
+        }
+        // Lokaler Zustand
+        const localState = {
+          client_id: clientId,
+          localStorage_keys: safe(()=> Object.keys(localStorage)),
+          sessionStorage_keys: safe(()=> Object.keys(sessionStorage))
+        };
+        document.getElementById('localState').textContent = JSON.stringify(localState, null, 2);
+      }
+
+      // Initial render (partial), then async enrich
+      renderDbg();
+      getPermissions().then(p => { dbg.permissions = p; renderDbg(); }).catch(()=>{});
+      getMediaDevices().then(m => { dbg.mediaDevices = m; renderDbg(); }).catch(()=>{});
+
+      // 6) Buttons
+      document.getElementById('copyJson').addEventListener('click', async ()=>{
+        const exportObj = {
+          timestamp: new Date().toISOString(),
+          params: qp,
+          status: { registered, reason, venue },
+          client_id: clientId,
+          debug: dbg
+        };
+        const txt = JSON.stringify(exportObj, null, 2);
+        try {
+          await navigator.clipboard.writeText(txt);
+          alert('Debug-JSON in die Zwischenablage kopiert.');
+        } catch(e) {
+          // Fallback
+          const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); alert('Debug-JSON kopiert (Fallback).'); } catch(_) { alert('Kopieren nicht erlaubt.'); }
+          ta.remove();
+        }
+      });
+
+      document.getElementById('resetCid').addEventListener('click', ()=>{
+        resetClientId();
+        alert('Client-ID zurückgesetzt. Seite lädt neu.');
+        location.reload();
+      });
+
+      document.getElementById('reload').addEventListener('click', ()=> location.reload(true));
+    })();
+  </script>
+</body>
+</html>
