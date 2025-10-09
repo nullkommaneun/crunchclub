@@ -165,7 +165,6 @@
       rescan: "Erneut scannen",
       saveNote: "Als Notiz speichern",
       foot: "Anonyme Technikdaten: Zeit, Token, anonyme Client-ID. Kein Website-Tracking.",
-      // States
       badge_ok_new: "Neu am Start!",
       badge_ok_back: "Weiter so!",
       badge_warn_already: "Schon eingesackt",
@@ -192,7 +191,6 @@
       rescan: "Scan again",
       saveNote: "Save as note",
       foot: "Anonymous tech data only: time, token, anonymous client ID. No cross-site tracking.",
-      // States
       badge_ok_new: "New here!",
       badge_ok_back: "Keep it up!",
       badge_warn_already: "Already grabbed",
@@ -238,14 +236,24 @@
   $('btnDE').onclick = ()=>{ LANG='de'; localStorage.setItem('cc_lang','de'); applyLang(); applyStateTexts(); };
   $('btnEN').onclick = ()=>{ LANG='en'; localStorage.setItem('cc_lang','en'); applyLang(); applyStateTexts(); };
 
-  // ===== Client-ID & Tokens =====
-  function getCID(){
+  // ===== Client-ID Handling (Server → UI → Persist) =====
+  function getLocalCID(){
     try{
       let id = localStorage.getItem('cc_client_id');
       if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
       return id;
     }catch(e){ return '(no storage)'; }
   }
+  function setLocalCID(v){
+    try{ if(v) localStorage.setItem('cc_client_id', v); }catch(e){}
+  }
+
+  // Priorität: 1) cid aus URL (vom Server verifiziert), 2) localStorage
+  const cidFromServer = (qs.get('cid') || '').trim();
+  const cid = cidFromServer || getLocalCID();
+  if (cidFromServer) setLocalCID(cidFromServer); // Serverwert gewinnt & wird persistiert
+
+  // ===== Token-Set lokal (nur für Münzen-Grid) =====
   function loadTokenSet(){
     try{ return new Set(JSON.parse(localStorage.getItem('cc_tokens')||'[]')); }catch(e){ return new Set(); }
   }
@@ -264,7 +272,6 @@
   // Basics
   $('kv_time').textContent  = new Date().toLocaleString(LANG==='de'?'de-DE':'en-GB');
   $('kv_venue').textContent = ven;
-  const cid = getCID();
   $('cid').textContent = cid;
 
   // Notiz-Download
