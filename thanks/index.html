@@ -6,7 +6,6 @@
   <title>CrunchClub · 8-Bit Stempelkarte</title>
   <meta name="color-scheme" content="light dark">
   <style>
-    /* ===== 8-BIT LOOK ===== */
     :root{
       --bg:#0a0f18; --fg:#e6e7ea; --muted:#9aa3b2; --panel:#0f1626; --border:#1d2738;
       --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
@@ -17,10 +16,8 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;
-      background:linear-gradient(180deg, var(--bg), #0b1220 50%, var(--bg));
-      color:var(--fg);
-      font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      margin:0; background:linear-gradient(180deg, var(--bg), #0b1220 50%, var(--bg));
+      color:var(--fg); font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     }
     .crt{position:fixed;inset:0;pointer-events:none;opacity:.07;
       background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
@@ -36,6 +33,16 @@
     }
     .title{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
     .logo{width:32px;height:32px;display:grid;place-items:center;background:#c1121f;color:#fff;border:4px solid #7a0b14;border-radius:4px;box-shadow:inset 0 0 0 4px rgba(0,0,0,.15);font-size:18px;line-height:1}
+    .lang{
+      display:flex;gap:6px;align-items:center
+    }
+    .lang button{
+      appearance:none;cursor:pointer;background:var(--panel);color:var(--fg);
+      border:4px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:900;text-transform:uppercase;
+      box-shadow:0 4px 0 rgba(0,0,0,.25)
+    }
+    .lang button.active{background:#1b2a44}
+
     .chip{display:inline-block;padding:4px 8px;border:4px solid var(--border);border-radius:6px;background:var(--panel);box-shadow:0 4px 0 rgba(0,0,0,.25);font-weight:800}
     .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
     .muted{color:var(--muted)}
@@ -51,23 +58,19 @@
     .coins-bar .counter{font-weight:900;text-transform:uppercase}
     .grid{--size:44px;margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--size),1fr));gap:10px}
 
-    /* 8-bit Pixel Coin via SVG Data URI (crisp, kein External) */
+    /* 8-bit Coin (SVG Data URI) */
     .coin{
       width:var(--size);height:var(--size);
       image-rendering:pixelated; background-size:contain; background-repeat:no-repeat; background-position:center;
       background-image: url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'>\
 <rect width='16' height='16' fill='none'/>\
-<!-- Outline -->\
 <rect x='1' y='1' width='14' height='14' fill='#2b1d00'/>\
 <rect x='2' y='2' width='12' height='12' fill='#000000' opacity='0.25'/>\
-<!-- Coin body -->\
 <rect x='2' y='2' width='12' height='12' fill='#f59e0b'/>\
 <rect x='2' y='8' width='12' height='6' fill='#b45309'/>\
 <rect x='2' y='2' width='12' height='3' fill='#fcd34d'/>\
-<!-- Inner rim -->\
 <rect x='3' y='3' width='10' height='10' fill='none' stroke='#7c3e06' stroke-width='1'/>\
-<!-- Shine -->\
 <rect x='4' y='4' width='3' height='1' fill='#fff3b0'/>\
 <rect x='5' y='5' width='2' height='1' fill='#fff3b0'/>\
 </svg>");
@@ -79,9 +82,8 @@
     .idrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
     .idcode{padding:8px 10px;border:4px solid var(--border);border-radius:6px;background:#0b1220;word-break:break-all}
-    .btn{appearance:none;cursor:pointer;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border:4px solid var(--border);border-radius:6px;background:#0b1220;color:var(--fg);box-shadow:0 6px 0 rgba(0,0,0,.25)}
+    .btn{appearance:none;cursor:pointer;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border:4px solid var(--border);border-radius:6px;background:#1b2a44;color:var(--fg);box-shadow:0 6px 0 rgba(0,0,0,.25)}
     .btn:active{transform:translateY(2px);box-shadow:0 4px 0 rgba(0,0,0,.25)}
-    .btn-primary{background:#1b2a44}
     .btn-ghost{background:transparent}
     .actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
     footer{margin:18px 0;color:var(--muted);font-size:12px;text-align:center}
@@ -95,11 +97,12 @@
     <div class="hud">
       <div class="title">
         <div class="logo">CC</div>
-        <div>CrunchClub · 8-Bit Stempelkarte</div>
+        <div id="hudTitle">CrunchClub · 8-Bit Stempelkarte</div>
       </div>
-      <div class="status">
-        <span id="badge" class="chip">Status …</span>
-        <!-- Zweit-Badge bewusst entfernt -->
+      <div class="lang">
+        <button id="btnDE">DE</button>
+        <button id="btnEN">EN</button>
+        <span class="chip" id="badge">…</span>
       </div>
     </div>
 
@@ -108,41 +111,38 @@
       <h2 id="headline">–</h2>
       <p id="explain" class="muted">–</p>
 
-      <!-- COIN COLLECTION -->
+      <!-- COINS -->
       <div class="coins-wrap">
         <div class="coins-bar">
-          <div class="counter"><span id="coinCount">0</span> Münzen gesammelt</div>
-          <div class="muted">Standort: <b id="kv_venue">–</b> · <span id="kv_time">–</span></div>
+          <div class="counter"><span id="coinCount">0</span> <span data-i18n="coinsLabel">Münzen gesammelt</span></div>
+          <div class="muted"><span data-i18n="location">Standort</span>: <b id="kv_venue">–</b> · <span id="kv_time">–</span></div>
         </div>
-
         <div id="coinGrid" class="grid" aria-live="polite"></div>
-
-        <!-- Legende ohne „?“-Hinweis -->
-        <div class="muted" style="margin-top:8px;font-size:12px">Jede Münze steht für einen eingelösten QR-Code.</div>
+        <div class="muted" style="margin-top:8px;font-size:12px" id="legendText">Jede Münze steht für einen eingelösten QR-Code.</div>
       </div>
 
       <!-- USER ID -->
       <div class="idbox">
-        <p><b>Deine CrunchClub-ID</b> (wie eine digitale Stempelkarte):</p>
+        <p id="idTitle"><b>Deine CrunchClub-ID</b> (wie eine digitale Stempelkarte):</p>
         <div class="idrow">
           <code id="cid" class="mono idcode"></code>
-          <button id="copyBtn" class="btn btn-primary">📋 Kopieren</button>
+          <button id="copyBtn" class="btn">📋 <span data-i18n="copy">Kopieren</span></button>
         </div>
-        <p class="muted" style="margin-top:6px">
+        <p class="muted" style="margin-top:6px" id="idHint">
           Diese ID gut aufbewahren. Mit ihr bleibt deine Sammlung erhalten.
           Geht sie verloren (neues Gerät/Inkognito), beginnt die Karte von vorn.
         </p>
         <div id="welcome" class="chip ok" style="margin-top:8px; display:none">★ Willkommen im exklusiven CrunchClub!</div>
       </div>
 
-      <!-- ACTIONS (ohne „ID zurücksetzen“) -->
+      <!-- ACTIONS -->
       <div class="actions">
-        <button id="retry" class="btn btn-primary">Erneut scannen</button>
-        <a href="#" id="saveTxt" class="btn btn-ghost" download="CrunchClub-ID.txt">Als Notiz speichern</a>
+        <button id="retry" class="btn"><span data-i18n="rescan">Erneut scannen</span></button>
+        <a href="#" id="saveTxt" class="btn btn-ghost" download="CrunchClub-ID.txt"><span data-i18n="saveNote">Als Notiz speichern</span></a>
       </div>
     </section>
 
-    <footer>Anonyme Technikdaten: Zeit, Token, anonyme Client-ID. Kein Website-Tracking.</footer>
+    <footer id="footNote">Anonyme Technikdaten: Zeit, Token, anonyme Client-ID. Kein Website-Tracking.</footer>
   </div>
 
 <script>
@@ -150,16 +150,100 @@
   const $ = id => document.getElementById(id);
   const qs = new URLSearchParams(location.search);
 
-  // Client-ID
+  // ===== i18n =====
+  const STR = {
+    de: {
+      hudTitle: "CrunchClub · 8-Bit Stempelkarte",
+      coinsLabel: "Münzen gesammelt",
+      location: "Standort",
+      legendText: "Jede Münze steht für einen eingelösten QR-Code.",
+      idTitle: "Deine CrunchClub-ID (wie eine digitale Stempelkarte):",
+      copy: "Kopieren",
+      idHint: "Diese ID gut aufbewahren. Mit ihr bleibt deine Sammlung erhalten. Geht sie verloren (neues Gerät/Inkognito), beginnt die Karte von vorn.",
+      rescan: "Erneut scannen",
+      saveNote: "Als Notiz speichern",
+      foot: "Anonyme Technikdaten: Zeit, Token, anonyme Client-ID. Kein Website-Tracking.",
+      // States
+      badge_ok_new: "Neu am Start!",
+      badge_ok_back: "Weiter so!",
+      badge_warn_already: "Schon eingesackt",
+      badge_warn_unknown: "Nochmal scannen?",
+      badge_err: "Kurze Pause",
+      head_new: "Level 1 erreicht!",
+      txt_new: "Dein Abenteuer im CrunchClub startet jetzt.",
+      head_back: "Münze eingesackt!",
+      txt_back: "Neuer QR-Code gezählt. High five.",
+      head_already: "Schon eingesammelt.",
+      txt_already: "Dieser Code zählt bei dir schon. Beim nächsten Mal gibt’s Nachschub.",
+      head_problem: "Upsi.",
+      txt_problem: "Der Scan war etwas zickig. Kurz warten und nochmal probieren.",
+      welcome: "★ Willkommen im exklusiven CrunchClub!"
+    },
+    en: {
+      hudTitle: "CrunchClub · 8-bit Loyalty",
+      coinsLabel: "coins collected",
+      location: "Location",
+      legendText: "Each coin equals one scanned QR code.",
+      idTitle: "Your CrunchClub ID (your digital punch card):",
+      copy: "Copy",
+      idHint: "Keep this ID safe to keep your collection. If you lose it (new device/incognito), the card restarts.",
+      rescan: "Scan again",
+      saveNote: "Save as note",
+      foot: "Anonymous tech data only: time, token, anonymous client ID. No cross-site tracking.",
+      // States
+      badge_ok_new: "New here!",
+      badge_ok_back: "Keep it up!",
+      badge_warn_already: "Already grabbed",
+      badge_warn_unknown: "Scan again?",
+      badge_err: "Hold up",
+      head_new: "Level 1 unlocked!",
+      txt_new: "Your CrunchClub quest starts now.",
+      head_back: "Coin collected!",
+      txt_back: "New QR counted. High five.",
+      head_already: "Already collected.",
+      txt_already: "This code is already in your bag. Grab a new one next time.",
+      head_problem: "Oops.",
+      txt_problem: "Scan was moody. Wait a sec and try again.",
+      welcome: "★ Welcome to the exclusive CrunchClub!"
+    }
+  };
+
+  function detectLang(){
+    const pref = localStorage.getItem('cc_lang');
+    if (pref) return pref;
+    const nav = (navigator.language||'').toLowerCase();
+    return nav.startsWith('de') ? 'de' : 'en';
+  }
+
+  let LANG = detectLang();
+
+  function applyLang(){
+    const S = STR[LANG];
+    $('hudTitle').textContent = S.hudTitle;
+    document.querySelector('[data-i18n="coinsLabel"]').textContent = S.coinsLabel;
+    document.querySelector('[data-i18n="location"]').textContent = S.location;
+    $('legendText').textContent = S.legendText;
+    $('idTitle').innerHTML = `<b>${S.idTitle.split(' (')[0]}</b> (${S.idTitle.split(' (')[1]||''}`;
+    document.querySelectorAll('[data-i18n="copy"]').forEach(el=>el.textContent = S.copy);
+    $('idHint').textContent = S.idHint;
+    document.querySelectorAll('[data-i18n="rescan"]').forEach(el=>el.textContent = S.rescan);
+    document.querySelectorAll('[data-i18n="saveNote"]').forEach(el=>el.textContent = S.saveNote);
+    $('footNote').textContent = S.foot;
+    $('btnDE').classList.toggle('active', LANG==='de');
+    $('btnEN').classList.toggle('active', LANG==='en');
+  }
+
+  $('btnDE').onclick = ()=>{ LANG='de'; localStorage.setItem('cc_lang','de'); applyLang(); applyStateTexts(); };
+  $('btnEN').onclick = ()=>{ LANG='en'; localStorage.setItem('cc_lang','en'); applyLang(); applyStateTexts(); };
+
+  // ===== Client-ID & Tokens =====
   function getCID(){
     try{
       let id = localStorage.getItem('cc_client_id');
       if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
       return id;
-    }catch(e){ return '(kein Storage)'; }
+    }catch(e){ return '(no storage)'; }
   }
-
-  // lokale Token-Sammlung (Set)
   function loadTokenSet(){
     try{ return new Set(JSON.parse(localStorage.getItem('cc_tokens')||'[]')); }catch(e){ return new Set(); }
   }
@@ -167,101 +251,98 @@
     try{ localStorage.setItem('cc_tokens', JSON.stringify(Array.from(set))); }catch(e){}
   }
 
-  // Query
-  const registered = qs.get('registered');
-  const state = (qs.get('state')||'').toLowerCase();
+  // ===== Query =====
+  const registered = qs.get('registered');        // "1"|"0"
+  const state = (qs.get('state')||'').toLowerCase(); // new_member|welcome_back|already
   const reason = (qs.get('reason')||'').toLowerCase();
   const ven = qs.get('ven') || 'crunchclub-zwickau';
   const tk  = qs.get('tk') || '';
-  const tt  = Number(qs.get('tt')||0); // unique tokens total (Server)
+  const tt  = Number(qs.get('tt')||0);
 
   // Basics
-  $('kv_time').textContent  = new Date().toLocaleString('de-DE');
+  $('kv_time').textContent  = new Date().toLocaleString(LANG==='de'?'de-DE':'en-GB');
   $('kv_venue').textContent = ven;
   const cid = getCID();
   $('cid').textContent = cid;
 
-  // Notiz-Download Link setzen
+  // Notiz-Download
   (function(){
-    const body = `${cid}\nHinweis: Diese ID ist deine digitale Stempelkarte.`;
-    const blob = new Blob([body], {type:'text/plain'});
+    const text = `${cid}\n${LANG==='de'
+      ? 'Hinweis: Diese ID ist deine digitale Stempelkarte.'
+      : 'Note: This ID is your digital punch card.'}`;
+    const blob = new Blob([text], {type:'text/plain'});
     $('saveTxt').href = URL.createObjectURL(blob);
   })();
 
   // Kopierbutton
   $('copyBtn').onclick = () => {
     navigator.clipboard.writeText(cid).then(()=>{
-      $('copyBtn').textContent = '✔ Kopiert';
-      setTimeout(()=> $('copyBtn').textContent = '📋 Kopieren', 1200);
+      const S = STR[LANG];
+      $('copyBtn').textContent = '✔ ' + (LANG==='de'?'Kopiert':'Copied');
+      setTimeout(()=>{$('copyBtn').innerHTML = '📋 <span data-i18n="copy">'+S.copy+'</span>';},1200);
     });
   };
 
-  // Badge
   function setBadge(kind,msg){
     const b=$('badge');
-    b.className='chip '+(kind==='ok'?'ok':kind==='warn'?'warn':kind==='err'?'err':'');
+    b.className='chip '+(kind==='ok'?'ok':kind==='warn'?'warn':'err');
     b.textContent=msg;
   }
 
-  // Sammlung pflegen
-  const tokenSet = loadTokenSet();
-
-  if (registered === '1') {
-    if (state === 'new_member') {
-      setBadge('ok','Neu registriert');
-      $('headline').textContent = 'Level 1 erreicht!';
-      $('explain').textContent  = 'Dein Abenteuer im CrunchClub hat begonnen.';
-      $('welcome').style.display = 'inline-block';
-      if (tk) tokenSet.add(tk);
-    } else if (state === 'welcome_back') {
-      setBadge('ok','Welcome Back');
-      $('headline').textContent = 'Münze eingesackt!';
-      $('explain').textContent  = 'Du hast einen neuen QR-Code eingelöst.';
-      if (tk) tokenSet.add(tk);
-    } else if (state === 'already') {
-      setBadge('warn','Code bereits eingelöst');
-      $('headline').textContent = 'Schon eingesammelt.';
-      $('explain').textContent  = 'Dieser QR-Code ist bei dir schon gewertet.';
+  function applyStateTexts(){
+    const S = STR[LANG];
+    if (registered === '1') {
+      if (state === 'new_member') {
+        setBadge('ok', S.badge_ok_new);
+        $('headline').textContent = S.head_new;
+        $('explain').textContent  = S.txt_new;
+        $('welcome').style.display = 'inline-block';
+        $('welcome').textContent = S.welcome;
+      } else if (state === 'welcome_back') {
+        setBadge('ok', S.badge_ok_back);
+        $('headline').textContent = S.head_back;
+        $('explain').textContent  = S.txt_back;
+      } else if (state === 'already') {
+        setBadge('warn', S.badge_warn_already);
+        $('headline').textContent = S.head_already;
+        $('explain').textContent  = S.txt_already;
+      } else {
+        setBadge('warn', S.badge_warn_unknown);
+        $('headline').textContent = S.head_problem;
+        $('explain').textContent  = S.txt_problem;
+      }
     } else {
-      setBadge('warn','Unklar');
-      $('headline').textContent = 'Hmm …';
-      $('explain').textContent  = 'Kein klarer Status. Bitte QR erneut scannen.';
+      // „freundliche“ Fehler
+      setBadge('err', STR[LANG].badge_err);
+      $('headline').textContent = S.head_problem;
+      $('explain').textContent  = S.txt_problem;
     }
-  } else {
-    const map={
-      rate:['err','Zu viele Scans'],
-      venue:['err','Falscher Standort'],
-      invalid:['err','QR ungültig'],
-      expired:['err','QR abgelaufen'],
-      inactive:['err','QR deaktiviert'],
-      param:['err','Parameter fehlen'],
-      server:['err','Server-Fehler']
-    };
-    const v=map[reason]||['warn','Unklar'];
-    setBadge(v[0],v[1]);
-    $('headline').textContent='Fehler/Unklar';
-    $('explain').textContent='Dieser Aufruf konnte nicht gewertet werden.';
   }
 
-  // Speichern
-  saveTokenSet(tokenSet);
-
-  // Coins rendern – ohne „?“-Münzen
-  const localCount = tokenSet.size;
-  const total = Math.max(localCount, tt);
+  // Sammlung & Coins
+  const tokenSet = loadTokenSet();
+  if (registered === '1' && (state === 'new_member' || state === 'welcome_back') && tk) {
+    tokenSet.add(tk);
+    saveTokenSet(tokenSet);
+  }
+  const total = Math.max(tokenSet.size, tt);
   const grid = $('coinGrid'); grid.innerHTML = '';
-  for (let i=0;i<total;i++){
-    const d=document.createElement('div');
-    d.className='coin';
+  for (let i=0; i<total; i++){
+    const d = document.createElement('div');
+    d.className = 'coin';
     grid.appendChild(d);
   }
   $('coinCount').textContent = String(total);
 
-  // Erneut scannen
+  // Rescan
   $('retry').onclick = () => {
     if (document.referrer && /script\.google\.com/.test(document.referrer)) location.reload();
     else history.length>1 ? history.back() : window.location.assign('/');
   };
+
+  // Initial texts
+  applyLang();
+  applyStateTexts();
 })();
 </script>
 </body>
