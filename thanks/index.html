@@ -32,10 +32,12 @@
       padding:10px 12px; box-shadow:0 8px 0 rgba(0,0,0,.25); image-rendering:pixelated;
     }
     .title{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
-    .logo{width:32px;height:32px;display:grid;place-items:center;background:#c1121f;color:#fff;border:4px solid #7a0b14;border-radius:4px;box-shadow:inset 0 0 0 4px rgba(0,0,0,.15);font-size:18px;line-height:1}
-    .lang{
-      display:flex;gap:6px;align-items:center
+    .logo{
+      width:32px;height:32px;display:grid;place-items:center;
+      background:#c1121f;color:#fff;border:4px solid #7a0b14;border-radius:4px;
+      box-shadow:inset 0 0 0 4px rgba(0,0,0,.15);font-size:18px;line-height:1
     }
+    .lang{display:flex;gap:6px;align-items:center}
     .lang button{
       appearance:none;cursor:pointer;background:var(--panel);color:var(--fg);
       border:4px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:900;text-transform:uppercase;
@@ -252,7 +254,7 @@
   }
 
   // ===== Query =====
-  const registered = qs.get('registered');        // "1"|"0"
+  const registered = qs.get('registered');           // "1"|"0"
   const state = (qs.get('state')||'').toLowerCase(); // new_member|welcome_back|already
   const reason = (qs.get('reason')||'').toLowerCase();
   const ven = qs.get('ven') || 'crunchclub-zwickau';
@@ -274,7 +276,7 @@
     $('saveTxt').href = URL.createObjectURL(blob);
   })();
 
-  // Kopierbutton
+  // Kopieren
   $('copyBtn').onclick = () => {
     navigator.clipboard.writeText(cid).then(()=>{
       const S = STR[LANG];
@@ -312,7 +314,6 @@
         $('explain').textContent  = S.txt_problem;
       }
     } else {
-      // „freundliche“ Fehler
       setBadge('err', STR[LANG].badge_err);
       $('headline').textContent = S.head_problem;
       $('explain').textContent  = S.txt_problem;
@@ -340,7 +341,7 @@
     else history.length>1 ? history.back() : window.location.assign('/');
   };
 
-  // Initial texts
+  // Initial
   applyLang();
   applyStateTexts();
 })();
