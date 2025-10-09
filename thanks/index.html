@@ -6,11 +6,10 @@
   <title>CrunchClub · 8-Bit Stempelkarte</title>
   <meta name="color-scheme" content="light dark">
   <style>
-    /* ===== 8-BIT LOOK & FEEL ===== */
+    /* ===== 8-BIT LOOK ===== */
     :root{
-      --bg:#0a0f18; --fg:#e6e7ea; --muted:#9aa3b2; --border:#1d2738;
-      --panel:#0f1626; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; --accent:#ef4444;
-      --coin1:#fcd34d; --coin2:#f59e0b; --coin3:#b45309; --coin-hi:#fde68a;
+      --bg:#0a0f18; --fg:#e6e7ea; --muted:#9aa3b2; --panel:#0f1626; --border:#1d2738;
+      --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
     }
     @media (prefers-color-scheme: light){
       :root{ --bg:#f6f7fb; --fg:#0f172a; --muted:#475569; --panel:#ffffff; --border:#e5e7eb; }
@@ -23,119 +22,69 @@
       color:var(--fg);
       font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     }
-    .crt{
-      position:fixed; inset:0; pointer-events:none; opacity:.07;
-      background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size: 100% 3px;
-    }
+    .crt{position:fixed;inset:0;pointer-events:none;opacity:.07;
+      background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size:100% 3px;}
 
-    /* Pixel-HUD Kopf */
     .wrap{max-width:920px;margin:0 auto;padding:16px 16px 28px}
+
+    /* HUD */
     .hud{
       display:flex;align-items:center;justify-content:space-between;
       background:var(--panel); border:4px solid var(--border); border-radius:8px;
-      padding:10px 12px; box-shadow:0 8px 0 rgba(0,0,0,.25);
-      image-rendering: pixelated;
+      padding:10px 12px; box-shadow:0 8px 0 rgba(0,0,0,.25); image-rendering:pixelated;
     }
-    .title{
-      display:flex; align-items:center; gap:10px;
-      font-weight:900; letter-spacing:.5px;
-      text-transform:uppercase;
-    }
-    .title .logo{
-      width:32px; height:32px; display:grid; place-items:center;
-      background:#c1121f; color:#fff; border:4px solid #7a0b14; border-radius:4px;
-      box-shadow: inset 0 0 0 4px rgba(0,0,0,.15);
-      font-size:18px; line-height:1;
-    }
-    .status{
-      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-      font-size:12px;
-    }
-    .chip{
-      display:inline-block; padding:4px 8px; border:4px solid var(--border); border-radius:6px;
-      background:var(--panel);
-      box-shadow:0 4px 0 rgba(0,0,0,.25); font-weight:800;
-    }
-    .ok{ color:var(--ok) } .warn{ color:var(--warn) } .err{ color:var(--err) }
-    .muted{ color:var(--muted) }
+    .title{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+    .logo{width:32px;height:32px;display:grid;place-items:center;background:#c1121f;color:#fff;border:4px solid #7a0b14;border-radius:4px;box-shadow:inset 0 0 0 4px rgba(0,0,0,.15);font-size:18px;line-height:1}
+    .chip{display:inline-block;padding:4px 8px;border:4px solid var(--border);border-radius:6px;background:var(--panel);box-shadow:0 4px 0 rgba(0,0,0,.25);font-weight:800}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+    .muted{color:var(--muted)}
 
     /* Panel */
-    .panel{
-      margin-top:16px; background:var(--panel); border:4px solid var(--border);
-      border-radius:8px; padding:16px; box-shadow:0 10px 0 rgba(0,0,0,.25);
-    }
+    .panel{margin-top:16px;background:var(--panel);border:4px solid var(--border);border-radius:8px;padding:16px;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+    h2{margin:0 0 6px;font-size:18px;text-transform:uppercase;letter-spacing:.5px;font-weight:900}
+    p{margin:6px 0}
 
-    /* 8-bit Headline */
-    h2{
-      margin:0 0 6px; font-size:18px; text-transform:uppercase; letter-spacing:.5px; font-weight:900;
-    }
-    p{ margin:6px 0 }
+    /* Coin-Bar & Grid */
+    .coins-wrap{margin-top:10px}
+    .coins-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .coins-bar .counter{font-weight:900;text-transform:uppercase}
+    .grid{--size:44px;margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(var(--size),1fr));gap:10px}
 
-    /* Coin Grid */
-    .coins-wrap{ margin-top:10px }
-    .coins-bar{
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
-    .coins-bar .counter{
-      font-weight:900; text-transform:uppercase;
-    }
-    .grid{
-      --size:42px;
-      margin-top:12px;
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(var(--size), 1fr));
-      gap:10px;
-    }
+    /* 8-bit Pixel Coin via SVG Data URI (crisp, kein External) */
     .coin{
-      width:var(--size); height:var(--size);
+      width:var(--size);height:var(--size);
+      image-rendering:pixelated; background-size:contain; background-repeat:no-repeat; background-position:center;
+      background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'>\
+<rect width='16' height='16' fill='none'/>\
+<!-- Outline -->\
+<rect x='1' y='1' width='14' height='14' fill='#2b1d00'/>\
+<rect x='2' y='2' width='12' height='12' fill='#000000' opacity='0.25'/>\
+<!-- Coin body -->\
+<rect x='2' y='2' width='12' height='12' fill='#f59e0b'/>\
+<rect x='2' y='8' width='12' height='6' fill='#b45309'/>\
+<rect x='2' y='2' width='12' height='3' fill='#fcd34d'/>\
+<!-- Inner rim -->\
+<rect x='3' y='3' width='10' height='10' fill='none' stroke='#7c3e06' stroke-width='1'/>\
+<!-- Shine -->\
+<rect x='4' y='4' width='3' height='1' fill='#fff3b0'/>\
+<rect x='5' y='5' width='2' height='1' fill='#fff3b0'/>\
+</svg>");
       border-radius:6px;
-      border:4px solid #2b1d00;
-      background:
-        radial-gradient(50% 50% at 35% 30%, var(--coin-hi) 0%, transparent 60%),
-        linear-gradient(180deg, var(--coin1) 0%, var(--coin2) 60%, var(--coin3) 100%);
-      box-shadow:
-        inset -4px -4px 0 rgba(0,0,0,.25),
-        inset  4px  4px 0 rgba(255,255,255,.08),
-        0 6px 0 #1f1400;
-      display:grid; place-items:center;
-      font-weight:900; color:#3b2900; text-shadow:0 1px 0 rgba(255,255,255,.2);
-      image-rendering: pixelated;
-    }
-    .coin::after{ content:"●"; transform:scale(1.1) }
-    .coin.mystery{ filter:saturate(.2) contrast(.9); position:relative }
-    .coin.mystery::after{ content:"?"; color:#1a1200 }
-
-    .legend{
-      display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; font-size:12px;
-    }
-    .mini{ width:18px; height:18px; border:3px solid #2b1d00; border-radius:4px;
-      background:linear-gradient(180deg, var(--coin1), var(--coin3));
-      box-shadow: inset -2px -2px 0 rgba(0,0,0,.25), inset 2px 2px 0 rgba(255,255,255,.08);
     }
 
     /* User-ID Block */
-    .idbox{
-      margin-top:16px; padding:12px; border:4px solid var(--border); border-radius:8px;
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.08));
-    }
-    .idrow{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
-    .mono{ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace }
-    .idcode{ padding:8px 10px; border:4px solid var(--border); border-radius:6px; background:#0b1220; word-break:break-all }
-    .btn{
-      appearance:none; cursor:pointer; font-weight:900; text-transform:uppercase; letter-spacing:.5px;
-      padding:8px 12px; border:4px solid var(--border); border-radius:6px; background:#0b1220; color:var(--fg);
-      box-shadow:0 6px 0 rgba(0,0,0,.25);
-    }
-    .btn:active{ transform:translateY(2px); box-shadow:0 4px 0 rgba(0,0,0,.25) }
-    .btn-primary{ background:#1b2a44 }
-    .btn-ghost{ background:transparent }
-
-    /* Actions unten */
-    .actions{ margin-top:14px; display:flex; gap:8px; flex-wrap:wrap }
-
-    /* Footer */
-    footer{ margin:18px 0; color:var(--muted); font-size:12px; text-align:center }
+    .idbox{margin-top:16px;padding:12px;border:4px solid var(--border);border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.08))}
+    .idrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .idcode{padding:8px 10px;border:4px solid var(--border);border-radius:6px;background:#0b1220;word-break:break-all}
+    .btn{appearance:none;cursor:pointer;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border:4px solid var(--border);border-radius:6px;background:#0b1220;color:var(--fg);box-shadow:0 6px 0 rgba(0,0,0,.25)}
+    .btn:active{transform:translateY(2px);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+    .btn-primary{background:#1b2a44}
+    .btn-ghost{background:transparent}
+    .actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+    footer{margin:18px 0;color:var(--muted);font-size:12px;text-align:center}
   </style>
 </head>
 <body>
@@ -150,11 +99,11 @@
       </div>
       <div class="status">
         <span id="badge" class="chip">Status …</span>
-        <span id="badge2" class="chip muted">–</span>
+        <!-- Zweit-Badge bewusst entfernt -->
       </div>
     </div>
 
-    <!-- Hauptpanel -->
+    <!-- Panel -->
     <section class="panel">
       <h2 id="headline">–</h2>
       <p id="explain" class="muted">–</p>
@@ -168,11 +117,8 @@
 
         <div id="coinGrid" class="grid" aria-live="polite"></div>
 
-        <div class="legend">
-          <div class="mini" aria-hidden="true"></div> = 1 QR-Code eingelöst
-          <span class="muted">·</span>
-          <span class="muted">„?“ = vom Server bestätigt, lokal nicht zugeordnet</span>
-        </div>
+        <!-- Legende ohne „?“-Hinweis -->
+        <div class="muted" style="margin-top:8px;font-size:12px">Jede Münze steht für einen eingelösten QR-Code.</div>
       </div>
 
       <!-- USER ID -->
@@ -189,20 +135,14 @@
         <div id="welcome" class="chip ok" style="margin-top:8px; display:none">★ Willkommen im exklusiven CrunchClub!</div>
       </div>
 
-      <!-- ACTIONS -->
+      <!-- ACTIONS (ohne „ID zurücksetzen“) -->
       <div class="actions">
         <button id="retry" class="btn btn-primary">Erneut scannen</button>
-        <button id="reset" class="btn">ID zurücksetzen</button>
-        <a href="#"
-           id="saveTxt"
-           class="btn btn-ghost"
-           download="CrunchClub-ID.txt">Als Notiz speichern</a>
+        <a href="#" id="saveTxt" class="btn btn-ghost" download="CrunchClub-ID.txt">Als Notiz speichern</a>
       </div>
     </section>
 
-    <footer>
-      Anonyme Technikdaten: Zeit, Token, anonyme Client-ID. Kein Website-Tracking.
-    </footer>
+    <footer>Anonyme Technikdaten: Zeit, Token, anonyme Client-ID. Kein Website-Tracking.</footer>
   </div>
 
 <script>
@@ -210,7 +150,7 @@
   const $ = id => document.getElementById(id);
   const qs = new URLSearchParams(location.search);
 
-  // ----- Client-ID Handling -----
+  // Client-ID
   function getCID(){
     try{
       let id = localStorage.getItem('cc_client_id');
@@ -218,146 +158,110 @@
       return id;
     }catch(e){ return '(kein Storage)'; }
   }
-  function resetCID(){
-    try{ localStorage.removeItem('cc_client_id'); localStorage.removeItem('cc_tokens'); }catch(e){}
-    location.reload();
-  }
 
-  // ----- Coins (lokal je Client-ID) -----
-  // Wir speichern die Liste der einzigartigen Tokens lokal (pro Client).
+  // lokale Token-Sammlung (Set)
   function loadTokenSet(){
-    try{
-      const raw = localStorage.getItem('cc_tokens');
-      const arr = raw ? JSON.parse(raw) : [];
-      return new Set(arr);
-    }catch(e){ return new Set(); }
+    try{ return new Set(JSON.parse(localStorage.getItem('cc_tokens')||'[]')); }catch(e){ return new Set(); }
   }
   function saveTokenSet(set){
-    try{
-      localStorage.setItem('cc_tokens', JSON.stringify(Array.from(set)));
-    }catch(e){}
+    try{ localStorage.setItem('cc_tokens', JSON.stringify(Array.from(set))); }catch(e){}
   }
 
-  // ----- Query-Werte vom Redirect -----
-  const registered = qs.get('registered'); // "1"|"0"
-  const state = (qs.get('state')||'').toLowerCase(); // new_member|welcome_back|already
+  // Query
+  const registered = qs.get('registered');
+  const state = (qs.get('state')||'').toLowerCase();
   const reason = (qs.get('reason')||'').toLowerCase();
   const ven = qs.get('ven') || 'crunchclub-zwickau';
-  const tk  = qs.get('tk') || '';          // aktueller Token
-  const mt  = Number(qs.get('mt')||0);     // visits_total
-  const tt  = Number(qs.get('tt')||0);     // tokens_seen_total (einzigartige Tokens)
-  const tsc = Number(qs.get('tsc')||0);    // Count dieses Tokens
-  const camp= qs.get('camp') || '';
+  const tk  = qs.get('tk') || '';
+  const tt  = Number(qs.get('tt')||0); // unique tokens total (Server)
 
-  // ----- Basics anzeigen -----
+  // Basics
   $('kv_time').textContent  = new Date().toLocaleString('de-DE');
   $('kv_venue').textContent = ven;
   const cid = getCID();
   $('cid').textContent = cid;
 
-  // Notiz-Download vorbereiten
+  // Notiz-Download Link setzen
   (function(){
     const body = `${cid}\nHinweis: Diese ID ist deine digitale Stempelkarte.`;
     const blob = new Blob([body], {type:'text/plain'});
-    const url  = URL.createObjectURL(blob);
-    $('saveTxt').href = url;
-    // URL später wieder freigeben wenn nötig
+    $('saveTxt').href = URL.createObjectURL(blob);
   })();
 
-  // Kopieren
+  // Kopierbutton
   $('copyBtn').onclick = () => {
-    navigator.clipboard.writeText(cid).then(()=> {
+    navigator.clipboard.writeText(cid).then(()=>{
       $('copyBtn').textContent = '✔ Kopiert';
-      setTimeout(()=>{$('copyBtn').textContent='📋 Kopieren'}, 1200);
+      setTimeout(()=> $('copyBtn').textContent = '📋 Kopieren', 1200);
     });
   };
 
-  // Badge-Helfer
-  function setBadges(kind, msg, sub){
-    const b = $('badge'); const b2 = $('badge2');
-    b.className = 'chip ' + (kind==='ok'?'ok':kind==='warn'?'warn':kind==='err'?'err':'');
-    b.textContent = msg;
-    b2.textContent = sub || '';
-    b2.className = 'chip muted';
+  // Badge
+  function setBadge(kind,msg){
+    const b=$('badge');
+    b.className='chip '+(kind==='ok'?'ok':kind==='warn'?'warn':kind==='err'?'err':'');
+    b.textContent=msg;
   }
 
-  // ----- Sammlung aktualisieren -----
+  // Sammlung pflegen
   const tokenSet = loadTokenSet();
 
   if (registered === '1') {
-    // State-abhängige Texte
     if (state === 'new_member') {
-      setBadges('ok','Neu registriert','Erstbesuch ✓');
+      setBadge('ok','Neu registriert');
       $('headline').textContent = 'Level 1 erreicht!';
       $('explain').textContent  = 'Dein Abenteuer im CrunchClub hat begonnen.';
       $('welcome').style.display = 'inline-block';
       if (tk) tokenSet.add(tk);
-
     } else if (state === 'welcome_back') {
-      setBadges('ok','Welcome Back','Neuer Code gezählt');
+      setBadge('ok','Welcome Back');
       $('headline').textContent = 'Münze eingesackt!';
       $('explain').textContent  = 'Du hast einen neuen QR-Code eingelöst.';
       if (tk) tokenSet.add(tk);
-
     } else if (state === 'already') {
-      setBadges('warn','Code bereits eingelöst','Keine doppelte Münze');
+      setBadge('warn','Code bereits eingelöst');
       $('headline').textContent = 'Schon eingesammelt.';
-      $('explain').textContent  = 'Dieser QR-Code wurde bei dir bereits gewertet.';
-      // kein Add
-
+      $('explain').textContent  = 'Dieser QR-Code ist bei dir schon gewertet.';
     } else {
-      setBadges('warn','Unklar','Bitte erneut scannen');
+      setBadge('warn','Unklar');
       $('headline').textContent = 'Hmm …';
       $('explain').textContent  = 'Kein klarer Status. Bitte QR erneut scannen.';
     }
   } else {
-    // Fehlerfälle
-    const map = {
-      rate:['err','Zu viele Scans','Kurze Pause einlegen'],
-      venue:['err','Falscher Standort','QR gilt hier nicht'],
-      invalid:['err','QR ungültig','Bitte akt. QR scannen'],
-      expired:['err','QR abgelaufen','Neuen QR verwenden'],
-      inactive:['err','QR deaktiviert','QR am Tresen anfordern'],
-      param:['err','Parameter fehlen','Bitte QR erneut scannen'],
-      server:['err','Server-Fehler','Bitte später erneut']
+    const map={
+      rate:['err','Zu viele Scans'],
+      venue:['err','Falscher Standort'],
+      invalid:['err','QR ungültig'],
+      expired:['err','QR abgelaufen'],
+      inactive:['err','QR deaktiviert'],
+      param:['err','Parameter fehlen'],
+      server:['err','Server-Fehler']
     };
-    const v = map[reason] || ['warn','Unklar','Nochmal scannen'];
-    setBadges(v[0], v[1], v[2]);
-    $('headline').textContent = 'Fehler/Unklar';
-    $('explain').textContent  = 'Dieser Aufruf konnte nicht gewertet werden.';
+    const v=map[reason]||['warn','Unklar'];
+    setBadge(v[0],v[1]);
+    $('headline').textContent='Fehler/Unklar';
+    $('explain').textContent='Dieser Aufruf konnte nicht gewertet werden.';
   }
 
-  // Speichern (nur wenn sich etwas geändert hat)
+  // Speichern
   saveTokenSet(tokenSet);
 
-  // ----- Rendering Coin-Grid -----
-  // Autoritativ: tt vom Server (unique Tokens insgesamt)
-  // Lokal: tokenSet.size; fehlende werden als "mystery" Coins aufgefüllt.
+  // Coins rendern – ohne „?“-Münzen
   const localCount = tokenSet.size;
-  const targetCount = Math.max(localCount, tt);
-  const grid = $('coinGrid');
-  grid.innerHTML = '';
-
-  // Render reale Coins (aus bekannten Tokens)
-  for (const _ of tokenSet) {
-    const div = document.createElement('div');
-    div.className = 'coin';
-    grid.appendChild(div);
+  const total = Math.max(localCount, tt);
+  const grid = $('coinGrid'); grid.innerHTML = '';
+  for (let i=0;i<total;i++){
+    const d=document.createElement('div');
+    d.className='coin';
+    grid.appendChild(d);
   }
-  // Ergänze Mystery-Coins, falls Server mehr weiß
-  for (let i = localCount; i < targetCount; i++) {
-    const div = document.createElement('div');
-    div.className = 'coin mystery';
-    grid.appendChild(div);
-  }
-  $('coinCount').textContent = String(targetCount);
+  $('coinCount').textContent = String(total);
 
-  // ----- Buttons -----
+  // Erneut scannen
   $('retry').onclick = () => {
     if (document.referrer && /script\.google\.com/.test(document.referrer)) location.reload();
     else history.length>1 ? history.back() : window.location.assign('/');
   };
-  $('reset').onclick = resetCID;
 })();
 </script>
 </body>
