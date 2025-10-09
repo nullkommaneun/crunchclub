@@ -2,228 +2,59 @@
 <html lang="de">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Restaurant · Loader</title>
-
-<!-- Netzwerkwarmup für das Ziel -->
-<link rel="dns-prefetch" href="//script.google.com">
-<link rel="preconnect" href="https://script.google.com" crossorigin>
-<link rel="prefetch" href="https://script.google.com" as="document" crossorigin>
-
+<title>CrunchClub · Weiterleitung…</title>
 <style>
-  :root{
-    --bg1:#0c0f17; --bg2:#0a0e15; --card:#0e1524cc; --stroke:#1f2a37; --muted:#9aa4b2; --fg:#e6eaf0;
-    --accent:#22d3ee; /* wird per Theme überschrieben */
-  }
-  html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 50% -10%,#0e1522 0%,#0b0f14 60%,#070b10 100%);color:var(--fg);font:15px ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto}
-  /* ==== PRELOADER ==== */
-  .pre{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;backdrop-filter:blur(3px)}
-  .grid{position:absolute;inset:0;opacity:.18;pointer-events:none;mask-image:radial-gradient(60% 60% at 50% 30%,#000 40%,transparent 100%)}
-  .grid:before{content:"";position:absolute;inset:-200% -200% 0 -200%;
-    background:radial-gradient(circle at 24px 24px,#0f1a2a 2px,transparent 3px) 0 0/48px 48px;
-    animation: drift 18s linear infinite}
-  @keyframes drift{to{transform:translateY(-48px)}}
-  .card{background:var(--card);border:1px solid var(--stroke);border-radius:16px;padding:22px 22px 18px;box-shadow:0 10px 32px rgba(0,0,0,.40);min-width:300px;max-width:420px}
-  .top{display:flex;gap:14px;align-items:center}
-  .title{font-weight:700;letter-spacing:.2px}
-  .muted{color:var(--muted)}
-  .badge{margin-left:auto;font-size:12px;border:1px solid var(--stroke);border-radius:999px;padding:4px 8px;background:#0b1320}
-  .meter{height:8px;background:#0f1a2a;border:1px solid #192334;border-radius:999px;overflow:hidden;margin-top:12px}
-  .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#60efff);transition:width .2s ease}
-  .note{margin-top:10px}
-  .pre.hide{animation:fade .6s ease forwards}
-  @keyframes fade{to{opacity:0;visibility:hidden}}
-  /* ==== ICON WRAPPER ==== */
-  .icon{width:64px;height:64px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#0f172a,#0b1320);border:1px solid #172033;box-shadow:inset 0 0 0 1px #0b1624}
-  /* ==== THEMES ==== */
-  [data-theme="ramen"]{--accent:#f59e0b}
-  [data-theme="taco"]{--accent:#22c55e}
-  [data-theme="fries"]{--accent:#fb7185}
-  /* Ramen: Schüssel + dampfende Nudel-Swirls */
-  .ramen-steam path{stroke:var(--accent);stroke-width:2;fill:none;stroke-linecap:round;stroke-dasharray:40 120;animation:steam 2.2s ease-in-out infinite}
-  .ramen-steam path:nth-child(2){animation-delay:.25s}
-  .ramen-steam path:nth-child(3){animation-delay:.5s}
-  @keyframes steam{0%{stroke-dashoffset:0;opacity:.2}50%{opacity:1}100%{stroke-dashoffset:-160;opacity:.2}}
-  .ramen-bowl{fill:none;stroke:#3b4a5e;stroke-width:2}
-  /* Taco */
-  .taco-shell{fill:none;stroke:var(--accent);stroke-width:2;filter:drop-shadow(0 0 10px rgba(34,197,94,.25))}
-  .taco-fill{fill:#2dd4bf;transform-origin:32px 40px;animation:fillbounce 1.3s ease-in-out infinite}
-  @keyframes fillbounce{50%{transform:translateY(-2px)}}
-  .taco-rot{transform-origin:32px 36px;animation:trot 3.4s ease-in-out infinite}
-  @keyframes trot{50%{transform:rotate(-8deg)}}
-  /* Fries */
-  .fries path{stroke:var(--accent);stroke-width:3;stroke-linecap:round}
-  .fries .f{transform-origin:8px 16px;animation:up 1.2s ease-in-out infinite}
-  .fries .f:nth-child(2){animation-delay:.15s}
-  .fries .f:nth-child(3){animation-delay:.3s}
-  @keyframes up{50%{transform:translateY(-3px)}}
-  .box{fill:none;stroke:#3b4a5e;stroke-width:2}
-  /* ==== MAIN CONTENT ==== */
-  main{min-height:100%;display:grid;place-items:center;padding:24px}
-  .content{opacity:0;transform:translateY(6px);transition:opacity .4s ease, transform .4s ease}
-  .content.show{opacity:1;transform:none}
-  .kicker{font-size:13px;color:#9aa4b2}
+  body{margin:0;display:grid;place-items:center;height:100svh;font:16px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;background:#0b0f1a;color:#e5e7eb}
+  .card{padding:22px 22px;border-radius:16px;border:1px solid #1f2937;background:#101726;max-width:520px;width:min(92vw,520px);text-align:center;position:relative;overflow:hidden}
+  .badge{width:100px;height:100px;margin:0 auto 14px;border-radius:50%;
+         background:radial-gradient(circle at 35% 30%, #dc2626, #7f1d1d);
+         display:grid;place-items:center;font-size:42px;color:#fff;font-weight:900;letter-spacing:-1px;
+         box-shadow:0 0 18px rgba(220,38,38,.4), inset 0 0 12px rgba(0,0,0,.5);}
+  .m{font-size:14px;color:#9ca3af}
 </style>
 <body>
-  <div class="pre" id="pre">
-    <div class="grid"></div>
-    <div class="card" id="card" data-theme="ramen">
-      <div class="top">
-        <div class="icon">
-          <!-- SVGs: alle vorhanden, wir blenden je nach Theme ein -->
-          <svg class="svg ramen" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
-            <g class="ramen-steam">
-              <path d="M18 22 C22 18, 28 18, 32 22"/>
-              <path d="M26 18 C30 14, 36 14, 40 18"/>
-              <path d="M34 22 C38 18, 44 18, 48 22"/>
-            </g>
-            <path class="ramen-bowl" d="M14 32 q18 12 36 0 v4 a22 22 0 0 1-36 0z"/>
-          </svg>
-
-          <svg class="svg taco" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="display:none">
-            <g class="taco-rot">
-              <path class="taco-shell" d="M16 40 a16 16 0 0 1 32 0"/>
-              <circle class="taco-fill" cx="32" cy="40" r="10"/>
-            </g>
-          </svg>
-
-          <svg class="svg fries" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="display:none">
-            <g class="fries">
-              <path class="f" d="M20 20 v18"/>
-              <path class="f" d="M28 18 v20"/>
-              <path class="f" d="M36 22 v16"/>
-              <path class="f" d="M44 19 v19"/>
-            </g>
-            <path class="box" d="M16 36 l4 12 h24 l4-12"/>
-          </svg>
-        </div>
-        <div>
-          <div class="title" id="title">Küche heizt an…</div>
-          <div class="muted" id="subtitle">Ramen wird vorbereitet</div>
-        </div>
-        <span class="badge" id="badge">0%</span>
-      </div>
-      <div class="meter"><div class="bar" id="bar"></div></div>
-      <div class="note muted" id="note">Frische Zutaten, heiß serviert.</div>
-    </div>
+  <div class="card">
+    <div class="badge">🍜</div>
+    <b>CrunchClub</b>
+    <div class="m">Sichere Weiterleitung …</div>
+    <div id="msg" class="m" style="margin-top:8px"></div>
   </div>
 
-  <main>
-    <div class="content" id="app">
-      <h1 style="margin:0 0 6px">Willkommen</h1>
-      <p class="kicker">Der Loader war nur das Intro. Inhalt kommt hier.</p>
-    </div>
-  </main>
-
 <script>
+/** ========== KONFIG ========== */
+const APP_URL = "https://script.google.com/macros/s/AKfycbzdDii900AOXGpJcp1kMnbV6Hk7VwMBMVHFKKceldOtGbamGqXRgzhR341mEDeCgrQ/exec"; // deine aktuelle WebApp-URL
+const DEFAULT_VENUE = "crunchclub-zwickau";
+/** ============================ */
+
 (function(){
-  const pre = document.getElementById('pre');
-  const app = document.getElementById('app');
-  const card = document.getElementById('card');
-  const bar = document.getElementById('bar');
-  const badge = document.getElementById('badge');
-  const title = document.getElementById('title');
-  const subtitle = document.getElementById('subtitle');
-  const note = document.getElementById('note');
-
-  const svgs = {
-    ramen: document.querySelector('.svg.ramen'),
-    taco: document.querySelector('.svg.taco'),
-    fries: document.querySelector('.svg.fries')
-  };
-
-  // Theme aus URL (z.B. ?theme=taco)
-  const params = new URLSearchParams(location.search);
-  const theme = (params.get('theme') || 'ramen').toLowerCase();
-  const valid = ['ramen','taco','fries'];
-  const t = valid.includes(theme) ? theme : 'ramen';
-  card.setAttribute('data-theme', t);
-
-  // Sichtbarkeit der SVGs + Texte
-  Object.values(svgs).forEach(s => s.style.display = 'none');
-  svgs[t].style.display = 'block';
-
-  const copy = {
-    ramen: {title:'Küche heizt an…', sub:'Ramen wird vorbereitet', note:'Frische Zutaten, heiß serviert.'},
-    taco:  {title:'Handmade in progress…', sub:'Taco wird gefüllt', note:'Knusprige Shell, saftige Füllung.'},
-    fries: {title:'Öl erreicht Temperatur…', sub:'Fries werden goldbraun', note:'Außen knusprig, innen fluffig.'}
-  }[t];
-
-  title.textContent = copy.title;
-  subtitle.textContent = copy.sub;
-  note.textContent = copy.note;
-
-  // ---------------- Netzwerk-Warmup & URL-Bau ----------------
-  const VENUE = params.get('venue_id') || 'crunchclub-zwickau';
-  const TOKEN = params.get('token') || '';
-  const APP  = 'https://script.google.com/macros/s/AKfycbzdDii900AOXGpJcp1kMnbV6Hk7VwMBMVHFKKceldOtGbamGqXRgzhR341mEDeCgrQ/exec';
+  const Q = new URLSearchParams(location.search);
+  const VENUE = Q.get('venue_id') || DEFAULT_VENUE;
+  const TOKEN = Q.get('token') || '';
 
   function getCID(){
     try{
       let id = localStorage.getItem('cc_client_id');
-      if(!id){
-        id = (crypto && crypto.randomUUID) ? crypto.randomUUID()
-            : String(Date.now())+'-'+Math.random().toString(16).slice(2);
-        localStorage.setItem('cc_client_id', id);
-      }
+      if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
       return id;
     }catch(e){ return ''; }
   }
+
+  // Eindeutige scan_id (Idempotenz für Server)
+  const scanId = (crypto && crypto.randomUUID) ? crypto.randomUUID()
+                  : (Date.now()+'_'+Math.random().toString(36).slice(2));
+
   const cid = encodeURIComponent(getCID());
   const ua  = encodeURIComponent(navigator.userAgent || '');
-  const targetUrl = `${APP}?venue_id=${encodeURIComponent(VENUE)}&token=${encodeURIComponent(TOKEN)}&client_id=${cid}&ua=${ua}`;
 
-  // Warmup so früh wie möglich (ohne CORS-Ansprüche)
-  if (TOKEN) {
-    // Versuch 1: Prefetch via fetch (no-cors)
-    try { fetch(targetUrl, { mode:'no-cors', cache:'no-store', keepalive:true }); } catch(e){}
-    // Versuch 2: Fallback über Image-Trick (startet GET)
-    try { const img = new Image(); img.referrerPolicy='no-referrer'; img.src = targetUrl; } catch(e){}
+  if(!TOKEN){
+    document.getElementById('msg').textContent = 'Fehlender Code – bitte QR erneut scannen.';
+    return;
   }
 
-  // ---------------- Progress: bis 90% simulieren, finish bei load ----------------
-  let p = 0, finished = false;
-  const tick = setInterval(()=>{
-    if (!finished) {
-      p = Math.min(90, p + Math.ceil(6 + Math.random()*10)); // bis 90%
-    } else {
-      p = Math.min(100, p + 8 + Math.floor(Math.random()*10)); // zügig auf 100
-    }
-    bar.style.width = p + '%';
-    badge.textContent = p + '%';
-  }, 180);
+  const url = `${APP_URL}?venue_id=${encodeURIComponent(VENUE)}&token=${encodeURIComponent(TOKEN)}&client_id=${cid}&ua=${ua}&scan_id=${encodeURIComponent(scanId)}`;
 
-  // ---------- Nach vollständigem Laden: Fade und Navigation PARALLEL ----------
-  const nextFrame = () => new Promise(r => requestAnimationFrame(()=>r()));
-
-  window.addEventListener('load', async () => {
-    if(!TOKEN){
-      clearInterval(tick);
-      title.textContent = 'Fehlender Token';
-      subtitle.textContent = 'Bitte QR erneut scannen.';
-      badge.style.display = 'none';
-      return;
-    }
-
-    finished = true;
-
-    // Warten bis 100 erreicht, aber nicht künstlich bremsen
-    const toFull = setInterval(()=>{
-      if(p >= 100){
-        clearInterval(toFull);
-      }
-    }, 50);
-
-    // 1) Sicher einen Frame rendern, damit der Loader sichtbar bleibt
-    await nextFrame();
-
-    // 2) Loader ausfaden (sichtbares Feedback)
-    pre.classList.add('hide');
-
-    // 3) Navigation sofort anstoßen (parallel zum Fade) – Page beginnt zu laden
-    //    requestAnimationFrame sorgt für einen sichtbaren Start des Fades auf Chrome/Android
-    requestAnimationFrame(()=>{ location.replace(targetUrl); });
-  }, { once:true });
-
+  document.getElementById('msg').textContent = 'Verbinde …';
+  location.replace(url);
 })();
 </script>
 </body>
