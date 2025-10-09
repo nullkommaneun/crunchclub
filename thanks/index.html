@@ -83,12 +83,19 @@
     .idbox{margin-top:16px;padding:12px;border:4px solid var(--border);border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.08))}
     .idrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-    .idcode{padding:8px 10px;border:4px solid var(--border);border-radius:6px;background:#0b1220;word-break:break-all}
+    .idinput{
+      min-width:260px;max-width:100%;
+      padding:8px 10px;border:4px solid var(--border);border-radius:6px;background:#0b1220;color:var(--fg);
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace
+    }
     .btn{appearance:none;cursor:pointer;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border:4px solid var(--border);border-radius:6px;background:#1b2a44;color:var(--fg);box-shadow:0 6px 0 rgba(0,0,0,.25)}
     .btn:active{transform:translateY(2px);box-shadow:0 4px 0 rgba(0,0,0,.25)}
     .btn-ghost{background:transparent}
     .actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+    .hint{font-size:12px;margin-top:6px}
     footer{margin:18px 0;color:var(--muted);font-size:12px;text-align:center}
+    .toast{position:fixed;right:12px;bottom:12px;background:#111827;border:1px solid #374151;color:#e5e7eb;padding:10px 12px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s}
+    .toast.show{opacity:1;transform:translateY(0)}
   </style>
 </head>
 <body>
@@ -127,10 +134,11 @@
       <div class="idbox">
         <p id="idTitle"><b>Deine CrunchClub-ID</b> (wie eine digitale Stempelkarte):</p>
         <div class="idrow">
-          <code id="cid" class="mono idcode"></code>
+          <input id="cidInput" class="idinput" autocomplete="off" spellcheck="false" />
           <button id="copyBtn" class="btn">📋 <span data-i18n="copy">Kopieren</span></button>
+          <button id="loginBtn" class="btn">🔓 <span data-i18n="login">Login</span></button>
         </div>
-        <p class="muted" style="margin-top:6px" id="idHint">
+        <p class="muted hint" id="idHint">
           Diese ID gut aufbewahren. Mit ihr bleibt deine Sammlung erhalten.
           Geht sie verloren (neues Gerät/Inkognito), beginnt die Karte von vorn.
         </p>
@@ -147,6 +155,8 @@
     <footer id="footNote">Anonyme Technikdaten: Zeit, Token, anonyme Client-ID. Kein Website-Tracking.</footer>
   </div>
 
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -161,6 +171,7 @@
       legendText: "Jede Münze steht für einen eingelösten QR-Code.",
       idTitle: "Deine CrunchClub-ID (wie eine digitale Stempelkarte):",
       copy: "Kopieren",
+      login: "Login",
       idHint: "Diese ID gut aufbewahren. Mit ihr bleibt deine Sammlung erhalten. Geht sie verloren (neues Gerät/Inkognito), beginnt die Karte von vorn.",
       rescan: "Erneut scannen",
       saveNote: "Als Notiz speichern",
@@ -178,7 +189,12 @@
       txt_already: "Dieser Code zählt bei dir schon. Beim nächsten Mal gibt’s Nachschub.",
       head_problem: "Upsi.",
       txt_problem: "Der Scan war etwas zickig. Kurz warten und nochmal probieren.",
-      welcome: "★ Willkommen im exklusiven CrunchClub!"
+      welcome: "★ Willkommen im exklusiven CrunchClub!",
+      // Login UX
+      login_ok: "ID übernommen. Nächster Scan zählt auf dieses Konto.",
+      login_err_format: "Diese ID sieht ungewohnt aus. Mindestens 8 Zeichen oder UUID nutzen.",
+      copy_ok: "Kopiert!",
+      id_placeholder: "Deine CrunchClub-ID hier…"
     },
     en: {
       hudTitle: "CrunchClub · 8-bit Loyalty",
@@ -187,6 +203,7 @@
       legendText: "Each coin equals one scanned QR code.",
       idTitle: "Your CrunchClub ID (your digital punch card):",
       copy: "Copy",
+      login: "Login",
       idHint: "Keep this ID safe to keep your collection. If you lose it (new device/incognito), the card restarts.",
       rescan: "Scan again",
       saveNote: "Save as note",
@@ -204,7 +221,12 @@
       txt_already: "This code is already in your bag. Grab a new one next time.",
       head_problem: "Oops.",
       txt_problem: "Scan was moody. Wait a sec and try again.",
-      welcome: "★ Welcome to the exclusive CrunchClub!"
+      welcome: "★ Welcome to the exclusive CrunchClub!",
+      // Login UX
+      login_ok: "ID set. Your next scan will count on this account.",
+      login_err_format: "This ID looks unusual. Use at least 8 chars or a UUID.",
+      copy_ok: "Copied!",
+      id_placeholder: "Type your CrunchClub ID…"
     }
   };
 
@@ -214,27 +236,35 @@
     const nav = (navigator.language||'').toLowerCase();
     return nav.startsWith('de') ? 'de' : 'en';
   }
-
   let LANG = detectLang();
 
+  function t(key){ return STR[LANG][key] || key; }
+
   function applyLang(){
-    const S = STR[LANG];
-    $('hudTitle').textContent = S.hudTitle;
-    document.querySelector('[data-i18n="coinsLabel"]').textContent = S.coinsLabel;
-    document.querySelector('[data-i18n="location"]').textContent = S.location;
-    $('legendText').textContent = S.legendText;
-    $('idTitle').innerHTML = `<b>${S.idTitle.split(' (')[0]}</b> (${S.idTitle.split(' (')[1]||''}`;
-    document.querySelectorAll('[data-i18n="copy"]').forEach(el=>el.textContent = S.copy);
-    $('idHint').textContent = S.idHint;
-    document.querySelectorAll('[data-i18n="rescan"]').forEach(el=>el.textContent = S.rescan);
-    document.querySelectorAll('[data-i18n="saveNote"]').forEach(el=>el.textContent = S.saveNote);
-    $('footNote').textContent = S.foot;
+    $('hudTitle').textContent = t('hudTitle');
+    document.querySelector('[data-i18n="coinsLabel"]').textContent = t('coinsLabel');
+    document.querySelector('[data-i18n="location"]').textContent = t('location');
+    $('legendText').textContent = t('legendText');
+    $('idTitle').innerHTML = `<b>${t('idTitle').split(' (')[0]}</b> (${t('idTitle').split(' (')[1]||''}`;
+    document.querySelectorAll('[data-i18n="copy"]').forEach(el=>el.textContent = t('copy'));
+    document.querySelectorAll('[data-i18n="login"]').forEach(el=>el.textContent = t('login'));
+    $('idHint').textContent = t('idHint');
+    document.querySelectorAll('[data-i18n="rescan"]').forEach(el=>el.textContent = t('rescan'));
+    document.querySelectorAll('[data-i18n="saveNote"]').forEach(el=>el.textContent = t('saveNote'));
+    $('footNote').textContent = t('foot');
     $('btnDE').classList.toggle('active', LANG==='de');
     $('btnEN').classList.toggle('active', LANG==='en');
+    $('cidInput').placeholder = t('id_placeholder');
   }
 
   $('btnDE').onclick = ()=>{ LANG='de'; localStorage.setItem('cc_lang','de'); applyLang(); applyStateTexts(); };
   $('btnEN').onclick = ()=>{ LANG='en'; localStorage.setItem('cc_lang','en'); applyLang(); applyStateTexts(); };
+
+  // ===== Toast
+  function toast(msg){
+    const el=$('toast'); el.textContent=msg; el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'), 1800);
+  }
 
   // ===== Client-ID Handling (Server → UI → Persist) =====
   function getLocalCID(){
@@ -242,7 +272,7 @@
       let id = localStorage.getItem('cc_client_id');
       if(!id){ id = crypto.randomUUID(); localStorage.setItem('cc_client_id', id); }
       return id;
-    }catch(e){ return '(no storage)'; }
+    }catch(e){ return ''; }
   }
   function setLocalCID(v){
     try{ if(v) localStorage.setItem('cc_client_id', v); }catch(e){}
@@ -250,8 +280,8 @@
 
   // Priorität: 1) cid aus URL (vom Server verifiziert), 2) localStorage
   const cidFromServer = (qs.get('cid') || '').trim();
-  const cid = cidFromServer || getLocalCID();
-  if (cidFromServer) setLocalCID(cidFromServer); // Serverwert gewinnt & wird persistiert
+  let cid = cidFromServer || getLocalCID();
+  if (cidFromServer) setLocalCID(cidFromServer);
 
   // ===== Token-Set lokal (nur für Münzen-Grid) =====
   function loadTokenSet(){
@@ -270,28 +300,52 @@
   const tt  = Number(qs.get('tt')||0);
 
   // Basics
-  $('kv_time').textContent  = new Date().toLocaleString(LANG==='de'?'de-DE':'en-GB');
+  $('kv_time')?.remove(); // nicht mehr angezeigt, falls vorhanden
   $('kv_venue').textContent = ven;
-  $('cid').textContent = cid;
+  const timeSpot = document.querySelector('#kv_time');
+  if (timeSpot) timeSpot.textContent = new Date().toLocaleString(LANG==='de'?'de-DE':'en-GB');
+
+  // ID-Feld initialisieren
+  const cidInput = $('cidInput');
+  cidInput.value = cid;
 
   // Notiz-Download
-  (function(){
+  function updateNoteLink(){
     const text = `${cid}\n${LANG==='de'
       ? 'Hinweis: Diese ID ist deine digitale Stempelkarte.'
       : 'Note: This ID is your digital punch card.'}`;
     const blob = new Blob([text], {type:'text/plain'});
     $('saveTxt').href = URL.createObjectURL(blob);
-  })();
+  }
+  updateNoteLink();
 
   // Kopieren
   $('copyBtn').onclick = () => {
-    navigator.clipboard.writeText(cid).then(()=>{
-      const S = STR[LANG];
-      $('copyBtn').textContent = '✔ ' + (LANG==='de'?'Kopiert':'Copied');
-      setTimeout(()=>{$('copyBtn').innerHTML = '📋 <span data-i18n="copy">'+S.copy+'</span>';},1200);
-    });
+    const val = cidInput.value.trim();
+    navigator.clipboard.writeText(val).then(()=> toast(LANG==='de'?STR.de.copy_ok:STR.en.copy_ok));
   };
 
+  // Login (ID übernehmen)
+  function looksLikeUUID(s){
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s);
+  }
+  function looksAcceptable(s){
+    return looksLikeUUID(s) || s.length>=8;
+  }
+  $('loginBtn').onclick = () => {
+    const entered = cidInput.value.trim();
+    if (!looksAcceptable(entered)){
+      toast(LANG==='de'?STR.de.login_err_format:STR.en.login_err_format);
+      cidInput.focus();
+      return;
+    }
+    cid = entered;
+    setLocalCID(cid);
+    updateNoteLink();
+    toast(LANG==='de'?STR.de.login_ok:STR.en.login_ok);
+  };
+
+  // Badge
   function setBadge(kind,msg){
     const b=$('badge');
     b.className='chip '+(kind==='ok'?'ok':kind==='warn'?'warn':'err');
